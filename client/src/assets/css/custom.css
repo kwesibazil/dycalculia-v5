@@ -1,0 +1,210 @@
+:root {
+  --fs-7: 0.958rem;
+  --fs-8: 0.738rem;
+  --fs-9: 0.638rem;
+  --fs-10: 0.538rem;
+  --p-6: 3.5rem;
+  --m-6: 3.5rem;
+  --swiper-pagination-color: var(--bs-warning);
+  --swiper-pagination-bullet-inactive-opacity: .5;
+  --swiper-pagination-bullet-inactive-color: var(--bs-gray-dark);
+}
+
+
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}html,body{
+  height: 100%;
+  min-width: 300px !important;
+  font-family:  Helvetica, sans-serif;
+}img{
+  display: block;
+}
+
+
+/*changes bootstrap setting */
+.btn-highlight-none{                      
+  box-shadow:none !important; 
+  outline: 0px !important; 
+}.btn-outline-primary:hover {
+  color: var(--bs-white) !important;
+}.btn-outline-warning:hover {
+  color: var(--bs-white) !important;
+}.form-control:focus {
+  outline: 0;
+  color: var(--bs-dark);
+  border-color: var(--bs-primary);
+  background-color: var(--bs-white-rgb);
+  box-shadow: 0 0 0 0.25rem rgb(61 178 255 / 25%);
+}.btn-outline-primary:hover{
+  color: var(--bs-white-rgb);
+}
+
+
+
+
+/*Additional Width & Height */
+.h-90{
+  height: 90%;
+}.h-60{
+  height: 60%;
+}.w-90{
+  width: 90%;
+}
+
+
+/*Additional svg fill colours*/
+.fill-primary{
+  fill: var(--bs-primary);
+}.fill-warning{
+  fill: var(--bs-warning);
+}.fill-danger{
+  fill: var(--bs-danger);
+}.fill-white{
+  fill: #fff;
+}.fill-success{
+  fill: var(--bs-success);
+}.fill-dark{
+  fill: var(--bs-dark)
+}.fill-secondary{
+  fill: var(--bs-secondary);
+}
+
+/*Additional Font size*/
+.fs-7{
+  font-size: var(--fs-7);
+}.fs-8{
+  font-size: var(--fs-8);
+}.fs-9{
+  font-size: var(--fs-9);
+}.fs-10{
+  font-size: var(--fs-10);
+}
+
+
+/*Additional padding size*/
+.p-6{
+  padding: var(--p-6)!important;
+}.ps-6 {
+  padding-left: var(--p-6)!important;
+}.pe-6 {
+  padding-right: var(--p-6)!important;
+}.px-6 {
+  padding-right: 3.5rem!important;
+  padding-left: 3.5rem!important;
+}.py-6 {
+  padding-top: var(--p-6)!important;
+  padding-bottom: var(--p-6)!important;
+}
+
+/*Additional margin size*/
+.m-6{
+  margin: var(--m-7)!important;
+}.ms-6 {
+  margin-left: var(--m-7)!important;
+}.me-6 {
+  margin-right: var(--m-7)!important;
+}.mx-6 {
+  margin-right: var(--m-7)!important;
+  margin-left: var(--m-7)!important;
+}.my-6 {
+  margin-top: var(--m-7)!important;
+  margin-bottom: var(--m-7)!important;
+}
+
+
+/*XS-Small*/
+@media (max-width:575px){
+  
+  .h-xs-90{
+    height: 90%;
+  }.h-xs-60{
+    height: 60%;
+  }.w-xs-90{
+    width: 90% !important;
+  }.w-xs-75{
+    width: 75% !important;
+  }
+
+  .fs-xs-7{
+    font-size: var(--fs-7);
+  }.fs-xs-8{
+    font-size: var(--fs-8);
+  }.fs-xs-9{
+    font-size: var(--fs-9);
+  }.fs-xs-10{
+    font-size: var(--fs-10);
+  }
+
+  .p-xs-6{
+    padding: var(--p-6)!important;
+  }.ps-xs-6 {
+    padding-left: var(--p-6)!important;
+  }.pe-xs-6 {
+    padding-right: var(--p-6)!important;
+  }.px-xs-6 {
+    padding-right: 3.5rem!important;
+    padding-left: 3.5rem!important;
+  }.py-xs-6 {
+    padding-top: var(--p-6)!important;
+    padding-bottom: var(--p-6)!important;
+  }
+  
+  /*Additional margin size*/
+  .m-xs-6{
+    margin: var(--m-7)!important;
+  }.ms-xs-6 {
+    margin-left: var(--m-7)!important;
+  }.me-xs-6 {
+    margin-right: var(--m-7)!important;
+  }.mx-xs-6 {
+    margin-right: var(--m-7)!important;
+    margin-left: var(--m-7)!important;
+  }.my-xs-6 {
+    margin-top: var(--m-7)!important;
+    margin-bottom: var(--m-7)!important;
+  }
+}
+
+
+/*removes password toggle icon from Edge*/
+input::-ms-reveal,
+input::-ms-clear {
+  display: none;
+}
+
+
+.fifty{
+  background-image: url('@/assets/img/fifty.png');
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  background-color: var(--bs-danger);
+}
+.ten{
+  background-image: url('@/assets/img/ten.png');
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  background-color: var(--bs-pink);
+}
+
+.hundred{
+  background-image: url('@/assets/img/hundred.png');
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  background-color: var(--bs-success);
+}
+.five-hundred{
+  background-image: url('@/assets/img/fiveHundred.png');
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  background-color: var(--bs-purple);
+}
+.twenty{
+  background-image: url('@/assets/img/twenty.png');
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  background-color: var(--bs-warning);
+
+}
