@@ -1,5 +1,5 @@
 <template>
-  <div class="overflow-auto px-4">
+  <div class="px-4">
     <div class="container ">
       <section class="w-md-75 mb-5">
         <h2>What is Dyscalculia?</h2>

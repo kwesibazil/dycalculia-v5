@@ -18,9 +18,12 @@ export default{
   },
 
   toggleSideNav (state, collapse) {
-    const innerWidth =  window.innerWidth
-    if(collapse || innerWidth < 768)
+    console.log('sidenav');
+    if(collapse || window.innerWidth < 768){
       state.sideNav = !state.sideNav
+      const body = document.querySelector("body")
+      body.classList.toggle('overflow-hidden')
+    }
   }, 
   
   

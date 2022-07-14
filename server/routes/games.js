@@ -5,9 +5,6 @@ const {checkLoggedIn, validRoute}  = require('../middleware/authentication')
 
 /** @route /api/v3/games */
 
-
-
-router.get('/games-info',  checkLoggedIn, controller.fetchGames)
-router.get('/testimonies', checkLoggedIn, controller.fetchTestimonies)
+router.get('/all',  checkLoggedIn, controller.fetchGames)
 
 module.exports = router

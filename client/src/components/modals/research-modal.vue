@@ -46,17 +46,19 @@
 
 <script setup>
   import { onBeforeUnmount, onMounted} from 'vue'
- 
+  import {mapMutations} from '@/libs/vuex'
+
+  const {resetModal} = mapMutations()
+
   onMounted( _ =>{
     const body = document.querySelector("body")
     body.classList.add('overflow-hidden')
-    console.log(body)
   })
 
   onBeforeUnmount(_ => {
     const body = document.querySelector("body")
     body.classList.remove('overflow-hidden')
-    console.log(body)
+    resetModal()
   })
 
 

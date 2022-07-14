@@ -1,11 +1,13 @@
 <template>
   <transition mode="out-in" name="nested">
-    <div v-if="getObjState({obj:'modal', prop:'isActive'})" @click="shakeX"  class="overlay d-flex justify-content-center ">
-      <div :class="{'animate__shakeX border border-2 border-dark': disabled }" class="animate__animated modal-container d-flex flex-column shadow bg-light px-2 px-sm-4 rounded-3 h-100 ">
-        <button @click="toggleModal" class="btn-close align-self-end pt-3 pb-2 " type="button" aria-label="Close"></button>
-        <div class="flex-grow-1 mb-3 h-75 modal-slot ">
+    <div v-if="getObjState({obj:'modal', prop:'isActive'})" @click="shakeX"  class="overlay">
+      <div :class="{'animate__shakeX  border border-2 border-dark': disabled }" class="animate__animated modal-container d-flex flex-column shadow bg-light px-3 px-sm-4 rounded-3 h-100">
+        <button @click="toggleModal" class="btn-close align-self-end pt-3 pb-2  my-1" type="button" aria-label="Close"></button>
+        
+        <div class="flex-grow-1 mb-3 h-75  modal-slot">
           <slot></slot>
         </div><!-- modal content ends here -->
+
       </div><!-- modal container ends here -->
     </div><!-- overlay ends here -->
   </transition>
@@ -28,8 +30,6 @@
 
 </script>
 
-
-
 <style scoped>
 
   .modal-slot::-webkit-scrollbar {
@@ -41,6 +41,7 @@
     width: 100vw;
     height: 100vh;
     position: fixed;
+    overflow-x: auto ;
     background-color: rgba(0, 0, 0, 0.4);
   }
 
@@ -48,17 +49,35 @@
     top: 10%;
     z-index: 4;
     max-width: 90%;
-    max-height: 55%;
-    min-height: 450px; 
-    position: fixed;
+    min-width: 300px;
+    max-height: 60%;
+    min-height: 400px; 
+    position: relative;
+    margin-left: auto;
+    margin-right: auto;
+    overflow-y:auto;
   }
 
   @media (min-width:576px){
     .modal-container{
       top: 5%;
-      max-height: 75%;
+      max-height: 77%;
       max-width: 490px;
     }
+  }
+
+  .modal-container::-webkit-scrollbar {
+    width: 7px;
+  }
+
+  /* Track */
+  .modal-container::-webkit-scrollbar-track {
+    background: rgb(187, 185, 185); ;
+  }
+
+  /* Handle*/
+  .modal-container::-webkit-scrollbar-thumb, .content-box::-webkit-scrollbar-thumb:hover {
+    background: var(--bs-secondary);
   }
 
 

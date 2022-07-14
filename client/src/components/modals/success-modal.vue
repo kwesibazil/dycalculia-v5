@@ -14,12 +14,7 @@
 </template>
 
 
-<script>
-
-  import { mapGetters } from 'vuex'
-
-  export default{
-    name: 'success-modal',
-    computed:mapGetters(['getObjState', 'isVisible'])
-  }
+<script setup>
+  import { mapGetters } from '@/libs/vuex'
+  const {getObjState, isVisible} = mapGetters()
 </script>

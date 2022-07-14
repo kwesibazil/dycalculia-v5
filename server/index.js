@@ -14,8 +14,8 @@ const server = express()
 
 //global middleware
 server.use(express.json())
-server.use(morgan(':date[web'))
 server.use(cors(corsOptions))
+server.use(morgan(':date[web'))
 server.use(session(sessionOptions))
 
 //passport setup
@@ -26,10 +26,8 @@ server.use(passport.session())      //uses the user property found on req.sessio
 
 //routes
 server.use('/api/v3/auth', require('./routes/auth'))
-server.use('/api/v3/games', require('./routes/games'))
-server.use('/api/v3/screener', require('./routes/screener'))
-server.use('/api/v3/math-quiz', require('./routes/quiz'))
 server.use('/api/v3/user', require('./routes/user'))
+server.use('/api/v3/game', require('./routes/games'))
 
 //404 Error && error handling
 server.use(require('./middleware/not-found'))

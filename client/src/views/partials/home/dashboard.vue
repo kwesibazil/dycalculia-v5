@@ -1,14 +1,19 @@
 <template>
   <transition name="fade" mode="out-in">
-    <div class="h-100 px-4 py-2" >
-      <section class="d-flex flex-column pb-3 mt-2 pt-2 h-100">
-        <h2 class="fs-5 fw-bold mb-lg-0">Math Games</h2>
-        <div class="d-flex flex-column justify-content-center h-100 ">
-          <p class="text-muted text-center mb-3 py-">What do you want to practice today?</p>
-          <GameCard />
+    <div class="d-flex flex-column h-100 px-3 bg-light overflow-auto">  
+      <div class="shadow-sm bg-white mb-3">
+        <div class="d-flex flex-column justify-content-center align-items-center mx-auto col col-sm-10 p-2 p-sm-3">
+          <h1 class="fs-5 fw-bold text-center">Dyscalculic Games</h1>
+          <p class="col col-sm-10 px-2 px-sm-0 mb-0 text-center fs-xs-7 fs-6">Lorem ipsum dolor sit, amet consectetur adipisicing elit. Corporis iusto, enim iure nisi minus sunt ea expedita eius praesentium .</p>
         </div>
+      </div>
+      
+      <section class="d-flex flex-column flex-grow-1 ">
+        <p class="text-muted px-2 text-center">Below are a few games design to aid dyscalculic adults</p>
+        <GameCard />
       </section>
-    </div><!-- container ends here -->
+
+    </div><!-- root container ends here -->
   </transition>
 </template>
 
