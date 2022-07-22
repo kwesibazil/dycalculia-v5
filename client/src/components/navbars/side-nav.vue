@@ -2,8 +2,8 @@
   <div class="">
     <div @click="toggleSideNav" class="overlay" :class="{'overlay--collapse': !isVisible('sideNav')}"></div>
 
-    <div class="sideNav shadow d-flex justify-content-center bg-white h-100" :class="{'sideNav--collapse': !isVisible('sideNav')}">
-      <nav class="navbar navbar-light py-0 h-100 px-xl-3 ">
+    <div class="sideNav shadow d-flex justify-content-center bg-white h-100 " :class="{'sideNav--collapse': !isVisible('sideNav')}">
+      <nav class="navbar navbar-light py-0 px-xl-3 h-100">
         <div class="d-flex flex-column justify-content-between h-100">
 
           <div @click="currentLink" id="sideNavLinks" ref="sideNavLinks" class="active navbar-nav d-flex flex-column justify-content-between align-items-start h-30">
@@ -87,6 +87,7 @@
     .sideNav{
       width:auto;
       max-width:250px; 
+      /* height: 91.5vh; */
       margin-right: .5rem;
       z-index: 5;
       overflow:hidden;    

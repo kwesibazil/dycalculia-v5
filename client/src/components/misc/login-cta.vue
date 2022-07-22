@@ -13,14 +13,7 @@
   </div>
 </template>
 
-<script>
+<script setup>
   import {mapMutations} from '@/libs/vuex'
-
-  export default {
-    name: 'login-cta',
-    setup(){
-      const {swapAuthForm, closeAuthErr} = mapMutations()
-      return {swapAuthForm, closeAuthErr}
-    }
-  }
+  const {swapAuthForm, closeAuthErr} = mapMutations()
 </script>

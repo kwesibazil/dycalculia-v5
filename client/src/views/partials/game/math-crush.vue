@@ -1,241 +1,251 @@
 <template>
-  <div class="h-100 " ref="grid">
-    <Loader v-if="loading"/>
+  <div class="h-100">
 
-    <div v-else class="grid-container d-flex flex-column align-items-center flex-grow-1 mb-2  "> 
-      <div class="d-flex justify-content-between align-items-center bg-white shadow-sm p-3 px-5 my-3 w-75">
-        <p class="mb-0">Score:<span class="text-dark">{{score}}</span></p>
-        <div class="d-none d-sm-block">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-balloon-heart-fill mx-1" :class="life.first ? 'fill-danger' : 'fill-secondary'"  viewBox="0 0 16 16">
-            <path fill-rule="evenodd" d="M8.49 10.92C19.412 3.382 11.28-2.387 8 .986 4.719-2.387-3.413 3.382 7.51 10.92l-.234.468a.25.25 0 1 0 .448.224l.04-.08c.009.17.024.315.051.45.068.344.208.622.448 1.102l.013.028c.212.422.182.85.05 1.246-.135.402-.366.751-.534 1.003a.25.25 0 0 0 .416.278l.004-.007c.166-.248.431-.646.588-1.115.16-.479.212-1.051-.076-1.629-.258-.515-.365-.732-.419-1.004a2.376 2.376 0 0 1-.037-.289l.008.017a.25.25 0 1 0 .448-.224l-.235-.468ZM6.726 1.269c-1.167-.61-2.8-.142-3.454 1.135-.237.463-.36 1.08-.202 1.85.055.27.467.197.527-.071.285-1.256 1.177-2.462 2.989-2.528.234-.008.348-.278.14-.386Z"/>
-          </svg>
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-balloon-heart-fill mx-1" :class="life.second ? 'fill-danger' : 'fill-secondary'"  viewBox="0 0 16 16">
-            <path fill-rule="evenodd" d="M8.49 10.92C19.412 3.382 11.28-2.387 8 .986 4.719-2.387-3.413 3.382 7.51 10.92l-.234.468a.25.25 0 1 0 .448.224l.04-.08c.009.17.024.315.051.45.068.344.208.622.448 1.102l.013.028c.212.422.182.85.05 1.246-.135.402-.366.751-.534 1.003a.25.25 0 0 0 .416.278l.004-.007c.166-.248.431-.646.588-1.115.16-.479.212-1.051-.076-1.629-.258-.515-.365-.732-.419-1.004a2.376 2.376 0 0 1-.037-.289l.008.017a.25.25 0 1 0 .448-.224l-.235-.468ZM6.726 1.269c-1.167-.61-2.8-.142-3.454 1.135-.237.463-.36 1.08-.202 1.85.055.27.467.197.527-.071.285-1.256 1.177-2.462 2.989-2.528.234-.008.348-.278.14-.386Z"/>
-          </svg>
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-balloon-heart-fill mx-1 " :class="life.third ? 'fill-danger' : 'fill-secondary'"  viewBox="0 0 16 16">
-            <path fill-rule="evenodd" d="M8.49 10.92C19.412 3.382 11.28-2.387 8 .986 4.719-2.387-3.413 3.382 7.51 10.92l-.234.468a.25.25 0 1 0 .448.224l.04-.08c.009.17.024.315.051.45.068.344.208.622.448 1.102l.013.028c.212.422.182.85.05 1.246-.135.402-.366.751-.534 1.003a.25.25 0 0 0 .416.278l.004-.007c.166-.248.431-.646.588-1.115.16-.479.212-1.051-.076-1.629-.258-.515-.365-.732-.419-1.004a2.376 2.376 0 0 1-.037-.289l.008.017a.25.25 0 1 0 .448-.224l-.235-.468ZM6.726 1.269c-1.167-.61-2.8-.142-3.454 1.135-.237.463-.36 1.08-.202 1.85.055.27.467.197.527-.071.285-1.256 1.177-2.462 2.989-2.528.234-.008.348-.278.14-.386Z"/>
-          </svg>
-        </div>
-        <p class="mb-0">Target: <span class="text-danger fw-bold">{{target}}</span></p>
+    <div  class="game-container d-flex flex-column align-items-center flex-grow-1 mb-2  "> 
+  
+      <div id="myGrid" class="grid h-75 rounded rounded-6 my-auto">
+        <div v-for="(tile, index) in gridSize * gridSize" :id="index" :key="index" class="tile-container d-flex justify-content-center align-items-center">
+          <Tile  @click="onClick" v-touch:swipe="onSwipe" />
+        </div>  
       </div>
       
-      <draggable  class="grid h-75 px-3 rounded rounded-3 my-auto"  >
-        <transition-group>
-          <div v-for="(square, index) in this.width*this.width" :id="index" :key="index" class="dragItem  d-flex justify-content-center align-items-center">
-            <Square @drop="dragDrop" @dragstart="dragStart" @dragend="dragEnd"/>
-          </div>
-        </transition-group>
-      </draggable>
     </div>
     
   </div>
 </template>
 
+<script setup>
+  import { ref, onMounted } from 'vue'
+  import {swapTiles, revertY, revertX} from './math-crush'
+  import Tile from '@/components/misc/tile'
 
-<script>
-  import Loader from '@/components/misc/loading.vue'
-  import Square from '@/components/misc/square.vue'
-  import { VueDraggableNext } from 'vue-draggable-next'
+  const points = ref(3)
+  const score = ref(0)
+  const gridSize = ref(8)
 
-  export default{
-    name: 'math-crush',
-    data(){
-      return{
-        target: 0,          //👈amount to match
-        loss: 0,
-        score: 0,
-        points: 3,            //👈points awarded for score match
-        width: 5,
-        grid: [],
-        rounds: 0,
-        timeout: 3350,
-        loading: true,
-        lvl:[
-          {target: 130},
-          {target: 170},
-          {target: 40},
-          {target: 300},
-          {target: 1100},
-          {target:700},
-          {target:60},
-          
-        ],
-        invalid: 'bg-white',
-        imgBeingDragged: null,
-        imgBeingReplaced: null,
-        amountBeingDragged: null,
-        amountBeingReplaced: null,
-        squareIdBeingDragged: null,
-        squareIdBeingReplaced: null,
-        life: {first: true, second:true, third: true},
-        amount:[10, 20, 50, 100, 500],
-        images:['ten','twenty','fifty','hundred','five-hundred']
-      }
-    },
-    components:{
-      Square,
-      Loader,
-      draggable: VueDraggableNext,
-    },
-    methods: {
-      createGrid(){
-        setTimeout(_ =>{
-          const grid = this.$refs.grid
-          const squares = grid.getElementsByClassName('square')
-
-          Array.from(squares).forEach(square =>{
-            const rand =  Math.floor(Math.random() * this.amount.length)
-            const img = this.images[rand]
-            const value  = this.amount[rand]
-            this.target = this.lvl[rand].target
-            square.classList.toggle(img)                //👈 adds background image to square
-            square.setAttribute('data-img', img)        //👈 save img class name as a data attr
-            square.setAttribute('draggable', true)      //👈 set to draggable  
-            square.setAttribute('data-amount', value)   //👈 set amount as a data attr
-            this.grid.push(square)                      //👈 push square to grid
-          })
-        }, this.timeout+50)
-      },
+  const tiles = {
+    alternate: true,
+    direction: null,
+    dest: {square: null, id:null},
+    source: {square: null, id:null },
+  }
+  const game = {
+    grid: [],
+    target: 130,
+    amount: [10, 20, 50, 100, 500],
+    images: ['ten','twenty','fifty','hundred','five-hundred']
+  }
 
 
-      dragStart(e){
-        const dragItem = e.target.closest('.dragItem')                      //👈element being dragged 
-        const square =  dragItem.firstElementChild                          //👈element with data attr
-        this.squareIdBeingDragged = parseInt(dragItem.getAttribute('id'))   //👈element id
-        this.amountBeingDragged =  square.dataset.amount                    //👈element amount
-        this.imgBeingDragged = square.dataset.img                           //👈element img
-      },
+  const createGrid = () => {
+    const gameTiles = document.getElementsByClassName('tile')
+    Array.from(gameTiles).forEach(tile =>{
+      const rand = Math.floor(Math.random() * game.amount.length)
+      const value = game.amount[rand]
+      const bg = game.images[rand]
+      tile.classList.add(bg)
+      tile.setAttribute('data-amount', value)   
+      tile.setAttribute('data-img', bg)   
+      game.grid.push(tile.parentElement)
+    })
+  }
 
-      dragDrop(e){
-        const dragItem = e.target.closest('.dragItem')                //👈element being dropped unto
-        const square =  dragItem.firstElementChild                    //👈element with data attr
-
-        this.imgBeingReplaced = square.dataset.img                               //👈element img
-        this.amountBeingReplaced = square.dataset.amount                         //👈element amount
-        this.squareIdBeingReplaced = parseInt(dragItem.getAttribute('id'))       //👈element id
-
-        square.classList.replace(this.imgBeingReplaced, this.imgBeingDragged)    //👈swap css class
-        square.dataset.amount = this.amountBeingDragged                          //👈swap amount value
-        square.dataset.img = this.imgBeingDragged                               //👈swap img
-
-        this.grid[this.squareIdBeingDragged].
-        classList.replace(this.imgBeingDragged, this.imgBeingReplaced)
-
-        this.grid[this.squareIdBeingDragged].dataset.amount = this.amountBeingReplaced
-        this.grid[this.squareIdBeingDragged].dataset.img = this.imgBeingReplaced
-      },
+  
+  const onClick = (e) => {
+    const square = e.target.closest('.tile-container') 
+    if(tiles.source.square === null){
+      tiles.source.id = parseInt(square.getAttribute('id'))
+      tiles.source.square = square
+      square.firstElementChild.firstElementChild.classList.add('selected')
+    }else setTiles(square)
+  }
+  
 
 
-      dragEnd(){
-        let validMoves = [                                      //👈can only move one square in each direction
-          this.squareIdBeingDragged -1,
-          this.squareIdBeingDragged +1,
-          this.squareIdBeingDragged - this.width,
-          this.squareIdBeingDragged + this.width
-        ]
 
-        let validMove = validMoves.includes(this.squareIdBeingReplaced)
-        
-        if(this.squareIdBeingReplaced && validMove)
-          this.squareIdBeingReplaced = null
-        else if(this.squareIdBeingReplaced && !validMove){
-          this.grid[this.squareIdBeingReplaced].classList.replace(this.imgBeingDragged, this.imgBeingReplaced)
-          this.grid[this.squareIdBeingDragged].classList.replace(this.imgBeingReplaced, this.imgBeingDragged)
+  const onSwipe = (direction, mouseEvent) =>{
+    if(tiles.source.square === null){
+      tiles.source.square = mouseEvent.srcElement.closest('.tile-container')
+      tiles.source.square.firstElementChild.firstElementChild.classList.add('selected')
+      tiles.source.id = parseInt(tiles.source.square.getAttribute('id'))
+    }else if(tiles.dest.square !== null) return
     
-          this.grid[this.squareIdBeingReplaced].dataset.amount = this.amountBeingReplaced
-          this.grid[this.squareIdBeingDragged].dataset.amount = this.amountBeingDragged
+    if(direction === 'top') setTiles(game.grid[tiles.source.id-8])
+    else if(direction === 'left')setTiles(game.grid[tiles.source.id-1])
+    else if(direction === 'right')setTiles(game.grid[tiles.source.id+1])
+    else if(direction === 'bottom')setTiles(game.grid[tiles.source.id+8])
+  }
 
-          this.grid[this.squareIdBeingReplaced].dataset.img = this.imgBeingReplaced
-          this.grid[this.squareIdBeingDragged].dataset.img = this.imgBeingDragged
-        }else{
-          this.grid[this.squareIdBeingDragged].classList.replace(this.imgBeingReplaced, this.imgBeingDragged)
-          this.grid[this.squareIdBeingDragged].dataset.amount = this.amountBeingDragged
-          this.grid[this.squareIdBeingDragged].dataset.img = this.imgBeingDragged
-        }
+  const setTiles = square => {
+    const id = parseInt(square.getAttribute('id'))
+    if(tiles.source.square !== null && tiles.dest.square === null && tiles.source.square !== square ){
+      tiles.dest.id = id
+      tiles.dest.square = square
+      validMoves()  
+    }else return
+  }
 
-        this.checkColumn()
-        this.checkRow()
-      },
+  
+  const swapValues = () => {
+    const sourceImg =  tiles.source.square.firstElementChild.dataset.img
+    const sourceAmount =  tiles.source.square.firstElementChild.dataset.amount
+    const destImg =  tiles.dest.square.firstElementChild.dataset.img
+    const destAmount =  tiles.dest.square.firstElementChild.dataset.amount
 
-      checkColumn(){
-        for(let i = 0; i<=14; i++){
-          let total = 0 
-          let column = [i, i+this.width, i+this.width*2]
-          column.forEach(index => total += parseInt(this.grid[index].dataset.amount))
-          
-          
-          if(total === this.target){
-            this.score += this.points
-            column.forEach(index =>{
-               let rand =  Math.floor(Math.random() * this.images.length)
-                this.grid[index].classList.replace(this.grid[index].dataset.img, this.images[rand] )
-                this.grid[index].dataset.img = this.images[rand]
-                this.grid[index].dataset.amount = this.amount[rand]
-            })
-          } 
-        }
-      },
+    tiles.source.square.firstElementChild.classList.replace(sourceImg, destImg)
+    tiles.source.square.firstElementChild.dataset.amount = destAmount
+    tiles.source.square.firstElementChild.dataset.img = destImg
+    tiles.dest.square.firstElementChild.classList.replace(destImg, sourceImg)
+    tiles.dest.square.firstElementChild.dataset.amount = sourceAmount
+    tiles.dest.square.firstElementChild.dataset.img = sourceImg
+  }
 
-      checkRow() {
-        for (let i = 0; i <= 22; i ++) {
-          let total = 0 
-          let row = [i, i+1, i+2]
-          const notValid = [3, 4, 8, 9, 13, 14, 18,19]     //👈 skip these iterations
 
-          if (notValid.includes(i)) continue
-          row.forEach(index => total += parseInt(this.grid[index].dataset.amount))
-          
-          if(total === this.target){
-            this.score += this.points
-            row.forEach(index => {
-              let rand =  Math.floor(Math.random() * this.images.length)
-              this.grid[index].classList.replace(this.grid[index].dataset.img, this.images[rand] )
-              this.grid[index].dataset.img = this.images[rand]
-              this.grid[index].dataset.amount = this.amount[rand]
-            })
-          } 
-        }
-      },
-      gameOver(){
-        this.$store.commit('toggleModal', 'over')
-        this.$store.commit('redirect', { route: 'dashboard', timeOut: 2500})
-      },
-      nextQuestion(){
-        const rand =  Math.floor(Math.random() * this.amount.length)
-        this.target = this.lvl[rand].target
-      },
-    },
-    watch:{
-      score:{
-        handler(newValue, oldValue){
-          this.rounds++
 
-          if(this.rounds > 2)
-            this.nextQuestion()
 
-          if(this.rounds >6)
-            this.gameOver()
-        }
-      }
-    },
-    mounted(){
-      this.createGrid()
-      setTimeout(_ =>{
-        this.loading = false
-        this.$store.commit('toggleModal',  'rules')
-      }, this.timeout)
+  const validMoves = () =>{
+    const destID = tiles.dest.id
+    const sourceID = tiles.source.id
+    let moves = [sourceID - 1, sourceID + 1, sourceID + 8,sourceID - 8]
+    
+    let validMove = moves.includes(destID)
 
-    },
-      beforeUnmount(){
-      const gameData = { score: this.score, game: 'math-crush'}
-      this.$store.dispatch('postScore', gameData)
+    if(validMove){
+      tiles.alternate = true
+      swapValues()
+      checkColStreak()
+      checkRowStreak()
+      resetTiles()
+    }
+    else{
+      console.log('invalid move ');
+      tiles.source.square.firstElementChild.firstElementChild.classList.remove('selected')
+      tiles.source.id = tiles.dest.id
+      tiles.source.square = tiles.dest.square
+      tiles.dest.id = null
+      tiles.dest.square = null
+      tiles.source.square.firstElementChild.firstElementChild.classList.add('selected')
     }
   }
+
+
+  const checkRowStreak = grid =>{
+    for(let i=0; i<62; i++){
+      let total = 0
+      let row = [i, i+1, i+2]
+      
+      const inValid = [6,7,14,15,22,23,30,31,38,39,46,47,54,55]
+      if (inValid.includes(i)) continue
+
+      row.forEach(index => total+= parseInt(game.grid[index].firstElementChild.dataset.amount))
+
+      if(total === game.target){
+        score.value += points.value
+        tiles.alternate = false
+        
+
+        if(tiles.source.square !== null){
+          swapTiles(tiles)
+
+          if(tiles.direction === true)
+            revertY(tiles)
+          else
+            revertX(tiles)
+        }
+
+        row.forEach(square => replaceTiles(square))
+      }
+      
+      else if(i === 63 && tiles.source.square !== null)
+        swapTiles(tiles)
+    
+    }
+  }
+
+
+
+  const checkColStreak = () => {  
+    
+    for(let i = 0; i<48; i++){
+      let total = 0
+      let col = [i, i+8, i+8*2]
+      col.forEach(index => total+= parseInt(game.grid[index].firstElementChild.dataset.amount))
+
+      if(total === game.target){
+        score.value += points.value
+        tiles.alternate = false
+        
+
+        if(tiles.source.square !== null){
+          swapTiles(tiles)
+
+          if(tiles.direction === true)
+            revertY(tiles)
+          else
+            revertX(tiles)
+          
+        }
+
+        col.forEach(square => replaceTiles(square))
+      }
+      
+    }
+
+    // if(tiles.source.square !== null )
+    //     swapTiles(tiles)
+
+  }
+
+
+
+  const replaceTiles = square => {
+    const rand = Math.floor(Math.random() * game.amount.length)
+    const value = game.amount[rand]
+    const bg = game.images[rand]
+
+    game.grid[square].firstElementChild.classList.replace(
+    game.grid[square].firstElementChild.dataset.img, 'bg-white')
+
+    game.grid[square].firstElementChild.dataset.amount = 0
+    game.grid[square].firstElementChild.dataset.img = 'bg-white'
+    // console.log(game.grid[square].firstElementChild);
+    // console.log(value + ' ' + bg);
+  }
+
+  const resetTiles = () =>{
+    tiles.source.square.firstElementChild.firstElementChild.classList.remove('selected')
+    tiles.source.square = null
+    tiles.source.id = null
+    tiles.dest.square = null
+    tiles.dest.id = null
+    tiles.alternate = true
+  }
+
+  
+    onMounted(_ =>{
+      createGrid()
+      checkColStreak()
+       checkRowStreak()
+    })
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
 </script>
 
 <style scoped>
 
-  .grid-container{
+  .game-container{
     width: 100%;
     height: 100%;
     background-image: url('@/assets/img/jungle-background.webp');
@@ -244,31 +254,15 @@
   }
 
   .grid{
-    width: 95%; 
+    width: 60%; 
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
     background-color: rgba(0, 0, 0, 0.4);
   }
 
-  @media (min-width:575px) {
-    .grid{
-      width: 75%; 
-    }
+  .tile-container{
+    width: 12.5%;
+    height: 12.5%;
   }
-
-   @media (min-width:992px) {
-    .grid{
-      width: 40%; 
-    }
-  }
-
-  .grid div{
-    height: 20%;
-    width: 20%;
-  }
-
-
-
-
 </style>

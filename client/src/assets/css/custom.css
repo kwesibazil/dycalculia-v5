@@ -46,7 +46,9 @@
 
 
 /*Additional Width & Height */
-.h-90{
+.h-95{
+  height: 99%;
+}.h-90{
   height: 90%;
 }.h-60{
   height: 60%;
@@ -178,6 +180,12 @@ input::-ms-clear {
   display: none;
 }
 
+
+.selected{
+  background-image: url('@/assets/img/selected.png');
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+}
 
 .fifty{
   background-image: url('@/assets/img/fifty.png');

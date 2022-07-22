@@ -70,35 +70,11 @@ const validateGameState = async(req, res, next) =>{
 
 
 
-const validateScreenerAnswers = async (req, res, next) => {
-  console.log('inside validate screener answers')
-  console.log(req.body)
-  const schema = Joi.object({
-    questionOne:  Joi.number().integer().min(0).max(20),
-    questionTwo:  Joi.number().integer().min(0).max(20),
-    questionThree:  Joi.number().integer().min(0).max(20),
-    questionFour:  Joi.number().integer().min(0).max(20),
-    questionFive:  Joi.number().integer().min(0).max(20),
-    questionSix:  Joi.number().integer().min(0).max(20),
-    questionSeven:  Joi.number().integer().min(0).max(20),
-    questionEight:  Joi.number().integer().min(0).max(20),
-    questionNine:  Joi.number().integer().min(0).max(20),
-    questionTen:  Joi.number().integer().min(0).max(20),
-    questionEleven:  Joi.number().integer().min(0).max(20),
-    questionTwelve:  Joi.number().integer().min(0).max(20)
-  }).error(_ => {throw new BadRequestError('client has issued a malformed or illegal request')})
-
-  console.log('after joi validation in screener validate')
-
-  await schema.validateAsync(req.body, {abortEarly: true})
-    .then(data => sanitize(req.body, data))
-  
-    next()
-}
 
 
 
 
-module.exports = {validateRegistration, validateLogin, validateScreenerAnswers, validateGameState}
+
+module.exports = {validateRegistration, validateLogin,  validateGameState}
 
 

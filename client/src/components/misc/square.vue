@@ -1,20 +1,20 @@
 <template>
-  <draggable class="square rounded rounded-circle h-75 w-75 ">
+  <div class="square rounded rounded-circle h-75 w-75 ">
     <div class="w-100 h-100">
+
     </div>
-  </draggable>
+  </div>
 </template>
 
 
-<script>
- import { VueDraggableNext } from 'vue-draggable-next'
-
-  export default{
-    name: 'square',
-    components:{
-      draggable: VueDraggableNext,
-    
-    },
-  }
+<script setup>
 </script>
 
+
+
+<style scoped>
+.square{
+    height: 20px;
+    width: 20px;
+  }
+</style>

@@ -3,7 +3,6 @@ import getRedirectMsg from '@/libs/feedback'
 
 export default{
   resetModal (state) {
-    console.log('reset modal');
     state.modal.current = null
     state.modal.isActive = null
   },
@@ -18,7 +17,6 @@ export default{
   },
 
   toggleSideNav (state, collapse) {
-    console.log('sidenav');
     if(collapse || window.innerWidth < 768){
       state.sideNav = !state.sideNav
       const body = document.querySelector("body")

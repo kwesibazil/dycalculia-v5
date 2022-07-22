@@ -1,5 +1,5 @@
 <template>
-  <div class="px-4">
+  <div class="px-4 info">
     <div class="container ">
       <section class="w-md-75 mb-5">
         <h2>What is Dyscalculia?</h2>
@@ -47,4 +47,26 @@
 </script>
 
 <style scoped>
+
+  .info{
+    overflow: auto;
+  }
+  
+  .info::-webkit-scrollbar {
+    width: 10px;
+  }
+
+  /* Track */
+  .info::-webkit-scrollbar-track {
+    background: rgb(187, 185, 185); ;
+  }
+
+  /* Handle*/
+  .info::-webkit-scrollbar-thumb, .content-box::-webkit-scrollbar-thumb:hover {
+    background: var(--bs-secondary);
+  }
+
+
+
+
 </style>

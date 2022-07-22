@@ -1,5 +1,5 @@
 <template>
-  <main class="container-fluid d-flex flex-column px-0 bg-light h-100  overflow-hidden">
+  <div class="container-fluid px-0 bg-light ">
     <MainNav />
     
     <teleport to="#modal-root">
@@ -10,13 +10,15 @@
       </Modal>
     </teleport>
 
-    <div class="d-flex flex-grow-1 mt-1 overflow-hidden">
+    <main class="d-flex mt-1  bg-info">
       <SideNav />
-      <router-view v-slot="{ Component }">
-          <component :is="Component" mode="out-in"/>
-      </router-view>
-    </div>
-  </main>
+      <div class="flex-grow-1">
+        <router-view v-slot="{ Component }">
+            <component :is="Component" mode="out-in"/>
+        </router-view>
+      </div>
+    </main>
+  </div>
 </template>
 
 <script>
@@ -43,10 +45,9 @@
 </script>
 
 <style scoped>
-  .height{
-    min-height: 500px;
+  main{
+    height: 91.5vh;
   }
-
 </style>
 
 

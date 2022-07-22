@@ -1,7 +1,7 @@
 <template>
   <div class=" d-flex flex-column pb-2 pb-sm-3">
     <h1 class="text-center fs-6 fw-bold mb-3">Please login to continue</h1>
-    <section class="bg-white border border-top-0 flex-grow-1 bg-danger ">
+    <section class="bg-white border border-top-0 flex-grow-1">
       <Tabs />
       <form @submit.prevent="submitForm" class="bg-white  p-3 pb-0  mt-2">
         <Email v-model="email"/>

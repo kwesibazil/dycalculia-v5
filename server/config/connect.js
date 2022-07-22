@@ -3,7 +3,7 @@ const mongoose = require('mongoose')
 const {ConnectError} = require('../errors')
 
 
-const connect  = mongoose.connect(process.env.PRODUCTION_DATABASE, {useNewUrlParser: true, useUnifiedTopology: true })
+const connect  = mongoose.connect(process.env.DEVELOPMENT_DATABASE, {useNewUrlParser: true, useUnifiedTopology: true })
   .then(conn => conn.connection.getClient())
   .catch(err => {throw new ConnectError(err.message)})
 
