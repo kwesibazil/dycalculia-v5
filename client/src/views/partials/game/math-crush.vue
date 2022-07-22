@@ -3,6 +3,29 @@
 
     <div  class="game-container d-flex flex-column align-items-center flex-grow-1 mb-2  "> 
   
+      <div class="d-flex justify-content-between align-items-center bg-white shadow-sm p-3 px-5 my-3 w-75">
+        <p class="mb-0">Score:<span class="text-dark">{{score}}</span></p>
+        <!-- <div class="d-none d-sm-block">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-balloon-heart-fill mx-1" :class="life.first ? 'fill-danger' : 'fill-secondary'"  viewBox="0 0 16 16">
+            <path fill-rule="evenodd" d="M8.49 10.92C19.412 3.382 11.28-2.387 8 .986 4.719-2.387-3.413 3.382 7.51 10.92l-.234.468a.25.25 0 1 0 .448.224l.04-.08c.009.17.024.315.051.45.068.344.208.622.448 1.102l.013.028c.212.422.182.85.05 1.246-.135.402-.366.751-.534 1.003a.25.25 0 0 0 .416.278l.004-.007c.166-.248.431-.646.588-1.115.16-.479.212-1.051-.076-1.629-.258-.515-.365-.732-.419-1.004a2.376 2.376 0 0 1-.037-.289l.008.017a.25.25 0 1 0 .448-.224l-.235-.468ZM6.726 1.269c-1.167-.61-2.8-.142-3.454 1.135-.237.463-.36 1.08-.202 1.85.055.27.467.197.527-.071.285-1.256 1.177-2.462 2.989-2.528.234-.008.348-.278.14-.386Z"/>
+          </svg>
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-balloon-heart-fill mx-1" :class="life.second ? 'fill-danger' : 'fill-secondary'"  viewBox="0 0 16 16">
+            <path fill-rule="evenodd" d="M8.49 10.92C19.412 3.382 11.28-2.387 8 .986 4.719-2.387-3.413 3.382 7.51 10.92l-.234.468a.25.25 0 1 0 .448.224l.04-.08c.009.17.024.315.051.45.068.344.208.622.448 1.102l.013.028c.212.422.182.85.05 1.246-.135.402-.366.751-.534 1.003a.25.25 0 0 0 .416.278l.004-.007c.166-.248.431-.646.588-1.115.16-.479.212-1.051-.076-1.629-.258-.515-.365-.732-.419-1.004a2.376 2.376 0 0 1-.037-.289l.008.017a.25.25 0 1 0 .448-.224l-.235-.468ZM6.726 1.269c-1.167-.61-2.8-.142-3.454 1.135-.237.463-.36 1.08-.202 1.85.055.27.467.197.527-.071.285-1.256 1.177-2.462 2.989-2.528.234-.008.348-.278.14-.386Z"/>
+          </svg>
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-balloon-heart-fill mx-1 " :class="life.third ? 'fill-danger' : 'fill-secondary'"  viewBox="0 0 16 16">
+            <path fill-rule="evenodd" d="M8.49 10.92C19.412 3.382 11.28-2.387 8 .986 4.719-2.387-3.413 3.382 7.51 10.92l-.234.468a.25.25 0 1 0 .448.224l.04-.08c.009.17.024.315.051.45.068.344.208.622.448 1.102l.013.028c.212.422.182.85.05 1.246-.135.402-.366.751-.534 1.003a.25.25 0 0 0 .416.278l.004-.007c.166-.248.431-.646.588-1.115.16-.479.212-1.051-.076-1.629-.258-.515-.365-.732-.419-1.004a2.376 2.376 0 0 1-.037-.289l.008.017a.25.25 0 1 0 .448-.224l-.235-.468ZM6.726 1.269c-1.167-.61-2.8-.142-3.454 1.135-.237.463-.36 1.08-.202 1.85.055.27.467.197.527-.071.285-1.256 1.177-2.462 2.989-2.528.234-.008.348-.278.14-.386Z"/>
+          </svg>
+        </div> -->
+        <p class="mb-0">Target: <span class="text-danger fw-bold">{{game.target}}</span></p>
+      </div>
+
+
+
+
+
+
+
+
       <div id="myGrid" class="grid h-75 rounded rounded-6 my-auto">
         <div v-for="(tile, index) in gridSize * gridSize" :id="index" :key="index" class="tile-container d-flex justify-content-center align-items-center">
           <Tile  @click="onClick" v-touch:swipe="onSwipe" />
@@ -91,6 +114,12 @@
     const sourceAmount =  tiles.source.square.firstElementChild.dataset.amount
     const destImg =  tiles.dest.square.firstElementChild.dataset.img
     const destAmount =  tiles.dest.square.firstElementChild.dataset.amount
+    
+    console.log('swap values');
+    console.log('source ' + sourceImg);
+    console.log('dest ' + destImg);
+    console.log('source replace '+ sourceImg + ' with ' + destImg);
+    console.log('dest replace '+ destImg + ' with ' + sourceImg);
 
     tiles.source.square.firstElementChild.classList.replace(sourceImg, destImg)
     tiles.source.square.firstElementChild.dataset.amount = destAmount
@@ -98,6 +127,32 @@
     tiles.dest.square.firstElementChild.classList.replace(destImg, sourceImg)
     tiles.dest.square.firstElementChild.dataset.amount = sourceAmount
     tiles.dest.square.firstElementChild.dataset.img = sourceImg
+  }
+
+  const swapImg = () => {
+    const sourceImg =  tiles.source.square.firstElementChild.dataset.img
+    const destImg =  tiles.dest.square.firstElementChild.dataset.img
+
+    if(!tiles.alternate){
+      console.log('first');
+      console.log('source ' + sourceImg);
+      console.log('dest ' + destImg);
+      console.log('source replace '+ sourceImg + ' with ' + destImg);
+      console.log('dest replace '+ destImg + ' with ' + sourceImg);
+      tiles.source.square.firstElementChild.classList.replace(sourceImg, destImg)
+      tiles.dest.square.firstElementChild.classList.replace(destImg, sourceImg)
+    }
+    else{
+      console.log('second');
+      console.log('source ' + sourceImg);
+      console.log('dest ' + destImg);
+      console.log('source replace '+ sourceImg + ' with ' + destImg);
+      console.log('dest replace '+ destImg + ' with ' + sourceImg);
+
+      tiles.source.square.firstElementChild.classList.replace(destImg, sourceImg)
+      tiles.dest.square.firstElementChild.classList.replace(sourceImg, destImg)
+    }
+
   }
 
 
@@ -115,10 +170,23 @@
       swapValues()
       checkColStreak()
       checkRowStreak()
-      resetTiles()
+      
+      if(tiles.source.square !== null){
+          swapTiles(tiles)
+          if(tiles.alternate === false){
+            setTimeout(() =>{
+              if(tiles.direction === true) revertY(tiles)
+              else revertX(tiles)
+              tiles.alternate = true
+              swapImg()
+            },500)
+          }
+      }
+      setTimeout(() =>{
+        resetTiles()
+      },1000)
     }
     else{
-      console.log('invalid move ');
       tiles.source.square.firstElementChild.firstElementChild.classList.remove('selected')
       tiles.source.id = tiles.dest.id
       tiles.source.square = tiles.dest.square
@@ -129,71 +197,44 @@
   }
 
 
-  const checkRowStreak = grid =>{
+  const checkRowStreak = () =>{
     for(let i=0; i<62; i++){
       let total = 0
       let row = [i, i+1, i+2]
       
       const inValid = [6,7,14,15,22,23,30,31,38,39,46,47,54,55]
       if (inValid.includes(i)) continue
-
       row.forEach(index => total+= parseInt(game.grid[index].firstElementChild.dataset.amount))
 
       if(total === game.target){
-        score.value += points.value
         tiles.alternate = false
-        
-
         if(tiles.source.square !== null){
-          swapTiles(tiles)
-
-          if(tiles.direction === true)
-            revertY(tiles)
-          else
-            revertX(tiles)
+          swapImg()
+          score.value += points.value
         }
-
         row.forEach(square => replaceTiles(square))
       }
-      
-      else if(i === 63 && tiles.source.square !== null)
-        swapTiles(tiles)
-    
     }
   }
 
 
 
   const checkColStreak = () => {  
-    
     for(let i = 0; i<48; i++){
       let total = 0
       let col = [i, i+8, i+8*2]
       col.forEach(index => total+= parseInt(game.grid[index].firstElementChild.dataset.amount))
 
       if(total === game.target){
-        score.value += points.value
         tiles.alternate = false
         
-
         if(tiles.source.square !== null){
-          swapTiles(tiles)
-
-          if(tiles.direction === true)
-            revertY(tiles)
-          else
-            revertX(tiles)
-          
+          swapImg()
+          score.value += points.value
         }
-
         col.forEach(square => replaceTiles(square))
       }
-      
     }
-
-    // if(tiles.source.square !== null )
-    //     swapTiles(tiles)
-
   }
 
 
@@ -203,14 +244,15 @@
     const value = game.amount[rand]
     const bg = game.images[rand]
 
-    game.grid[square].firstElementChild.classList.replace(
-    game.grid[square].firstElementChild.dataset.img, 'bg-white')
+    setTimeout(_ =>{
+      game.grid[square].firstElementChild.classList.replace(game.grid[square].firstElementChild.dataset.img, 'bg-white')
+      game.grid[square].firstElementChild.dataset.amount = 0
+      game.grid[square].firstElementChild.dataset.img = 'bg-white'
+    }, 1000)
 
-    game.grid[square].firstElementChild.dataset.amount = 0
-    game.grid[square].firstElementChild.dataset.img = 'bg-white'
-    // console.log(game.grid[square].firstElementChild);
-    // console.log(value + ' ' + bg);
   }
+
+
 
   const resetTiles = () =>{
     tiles.source.square.firstElementChild.firstElementChild.classList.remove('selected')
@@ -222,11 +264,11 @@
   }
 
   
-    onMounted(_ =>{
-      createGrid()
-      checkColStreak()
-       checkRowStreak()
-    })
+  onMounted(_ =>{
+    createGrid()
+    checkColStreak()
+    checkRowStreak()
+  })
 
 
 
