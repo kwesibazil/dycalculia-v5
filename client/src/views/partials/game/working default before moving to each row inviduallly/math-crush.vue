@@ -93,6 +93,8 @@ import { swapTiles } from './math-crush';
       util.swapTilesAmount(tiles)
       checkColStreak()
       checkRowStreak()
+      //markedTiles()
+     
       util.reset(tiles)
     } 
     else {
@@ -112,109 +114,63 @@ import { swapTiles } from './math-crush';
 
       if (inValid.includes(i)) continue
       row.forEach(index => total+= parseInt(game.grid[index].firstElementChild.dataset.amount))
-      if(total === game.target)addPoints(row)
+      if(total === game.target){
+        row.forEach(id => {
+          game.grid[id].firstElementChild.setAttribute('data-marked', 0)
+          game.grid[id].firstElementChild.setAttribute('data-skip', 0)
+        })
+        addPoints(row)
+      }
     }
   }
+
+
 
   const checkColStreak = () => {  
     for(let i = 0; i<48; i++){
       let total = 0
       let col = [i, i+8, i+8*2]
       col.forEach(index => total+= parseInt(game.grid[index].firstElementChild.dataset.amount))
-      if(total === game.target)addPoints(col)
-      
+
+      if(total === game.target){
+        game.grid[col[2]].firstElementChild.setAttribute('data-marked', 0)
+        game.grid[col[2]].firstElementChild.setAttribute('data-skip', 0)
+        addPoints(col)
+      }
     }
   }
 
 
-    const markedTiles = () => {
-      const invalid = document.getElementsByClassName('marked')
-      Array.from(invalid).forEach(tile => game.invalid.push(tile.parentElement))
-      game.invalid.reverse()
-    
-      game.invalid.forEach(elem =>{
-        let id = parseInt(elem.getAttribute('id'))
-        while(id >= 0){
-          game.replacement.push(game.grid[id])
-          if(parseInt(game.grid[id].firstElementChild.dataset.amount) > 0)game.valid.push(document.getElementById(id))
-          id -= game.size
-        }
-      })
-
-      game.replacement = [...new Set(game.replacement)]
-      game.valid = [...new Set(game.valid)]
-    
-      game.valid.forEach(elem => {
-        //elem.classList.add('bg-white')
-        let step = 0, id = parseInt(elem.getAttribute('id'))
-        while(id < 64){
-          if(parseInt(game.grid[id].firstElementChild.dataset.amount) === 0)step++
-          id +=8
-        }
-        elem.firstElementChild.setAttribute('data-skip', step)
-      })
-
-     // game.replacement.reverse()
-
-      console.log('first');
-      game.replacement.forEach(elem =>{
-        const top = [0,1,2,3,4,5,6,7]
-        const  elemID = parseInt(elem.getAttribute('id'))
-        let ID = elemID
+  const markedTiles = () => {
+    const invalid = document.getElementsByClassName('marked')
+    Array.from(invalid).forEach(tile => game.invalid.push(tile))
+    game.invalid.reverse()
   
-        while(ID >=  0){
-          try{
-        
-            ID -= 8
-            if(top.includes(elemID) || ID < 0) {
-              // console.log(elem);
-              // console.log('everything above should be empty');
-              elem.classList.add('bg-danger', 'replace')
-              break
-            }
+    game.invalid.forEach(index =>{
+      let amount = parseInt(index.parentElement.getAttribute('id'))
+      while(amount >= 0){
+        game.replacement.push(document.getElementById(amount).firstElementChild)
+        if(parseInt(game.grid[amount].firstElementChild.dataset.amount) > 0)game.valid.push(document.getElementById(amount).firstElementChild)
+        amount -= game.size
+      }
+    })
 
+    game.replacement = [...new Set(game.replacement)]
+    game.valid = [...new Set(game.valid)]
+    const marked = game.replacement.filter(marked => marked.hasAttribute('data-marked'))
 
-            //console.log(`checking if ${parseInt(game.grid[ID].firstElementChild.dataset.amount)} > 0`);
-
-            if(parseInt(game.grid[ID].firstElementChild.dataset.amount) > 0){
-              elem.firstElementChild.dataset.amount = game.grid[ID].firstElementChild.dataset.amount 
-              game.grid[ID].firstElementChild.dataset.amount = 0
-              break
-            }
-
-
-
-
-          }catch{
-            console.log('error');
-            console.log(ID);
-          }
-            
-        }
-        //console.log(elem);
-        //elem.classList.add('bg-info')
-
-      })
-
-      //console.log('second');
-
-      const needsVales = document.getElementsByClassName('replace')
-      Array.from(needsVales).forEach(tile => console.log(tile))
-     
+    marked.forEach(elem => {
+      let belowID = parseInt(elem.parentElement.getAttribute('id')) + 8
+      const end = parseInt(game.replacement[0].parentElement.getAttribute('id'))
+      while(belowID <= end){
+        if(marked.includes(document.getElementById(belowID).firstElementChild))
+            elem.removeAttribute('data-marked', 'data-skip')
+        belowID += 8
+      }
+    })
     
     animate.dropTiles(game.replacement, game.valid, game.invalid)
   }
-
-
-const newTiles = (tiles) => {
-  console.log('swapping source and dest amount values only not background image');
-  const temp = tiles.source.square.firstElementChild.dataset.amount
-  tiles.source.square.firstElementChild.dataset.amount = tiles.dest.square.firstElementChild.dataset.amount
-  tiles.dest.square.firstElementChild.dataset.amount = temp
-}
-
-
-
 
 
   const addPoints =  (streak) => {
@@ -222,7 +178,7 @@ const newTiles = (tiles) => {
     streak.forEach(id => {
       const target = game.grid[id].firstElementChild
       target.dataset.amount = 0
-      target.classList.add('marked', 'bomb') 
+      target.classList.add('marked') 
     })
   }
 

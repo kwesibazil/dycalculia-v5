@@ -29,7 +29,6 @@ const reset = (tiles) => {
     tiles.dest.id = null
     tiles.alternate = true
   }, 1000)
-  
 }
 
 const util = { addAttributes, swapTilesAmount, reset}

@@ -1,19 +1,30 @@
 import anime from 'animejs/lib/anime.es.js';
 
 
+const steps = (valid) => {
+  let step = 0
+
+  valid.forEach(elem => {
+    const id = elem.parentElement.getAttribute('id')
+  
+  })
+
+  return 1
+}
+
+
 const dropTiles = (replacement, valid, invalid) => {
   console.log('drop');
   
-  
-
-  const width = replacement[0].getBoundingClientRect().width;
-  const height = replacement[0].getBoundingClientRect().height;
-
+  console.log(replacement[0].parentElement);
+  const bottom = [56,57,58,59,60,61,62,63]
+  const width = replacement[0].parentElement.getBoundingClientRect().width;
+  const height = replacement[0].parentElement.getBoundingClientRect().height;
 
 
   invalid.forEach(tile => {
     const tl = anime.timeline({
-      targets: tile.firstElementChild,
+      targets: tile,
       duration: 1000,
       easing: 'easeInSine',
     })
@@ -22,19 +33,28 @@ const dropTiles = (replacement, valid, invalid) => {
       rotate: '1turn',
       scale: .5,
       complete: function() {
-        tile.firstElementChild.removeAttribute('class')
-        tile.firstElementChild.classList.add('invisible')
+        tile.removeAttribute('class')
+        tile.classList.add('invisible')
       }
     })
   })
 
 
   valid.forEach(tile => {
-    console.log(tile);
-    //console.log(height*tile.firstElementChild.dataset.skip);
-
+    let step = 0,  id = parseInt(tile.parentElement.getAttribute('id'))
+    while(id < 64 && !document.getElementById(id).firstElementChild.hasAttribute('data-marked')){
+      id +=8
+      step+=1
+    }
+    
+    const below = parseInt(tile.parentElement.getAttribute('id')) +8 
+    let skip = parseInt(document.getElementById(below).firstElementChild.dataset.skip)
+    if(skip === undefined || isNaN(skip))skip = parseInt(document.getElementById(id).firstElementChild.dataset.skip)
+    tile.setAttribute('data-skip', skip+1)
+    step -= skip
+    
     const t2 = anime.timeline({
-      targets: tile.firstElementChild,
+      targets: tile,
       direction: 'normal',
       duration: 1000,
       easing: 'easeInSine',
@@ -42,14 +62,33 @@ const dropTiles = (replacement, valid, invalid) => {
     })
 
     t2.add({ 
-      translateY: height*tile.firstElementChild.dataset.skip,
+      translateY: height*step,
     })
+    .add({
+      translateY: 0,
+      rotate: '1turn',
+      scale: .5,
+      begin: function() {
+        tile.removeAttribute('class')
+        tile.classList.add('invisible')
+        console.log('turn invisible then translate back up');
+      }
 
-    // t2.add({ 
-    //   translateY: 0,
-    // })
-  
-    
+    }, '+=500')
+
+    .add({
+      
+      rotate: '-1turn',
+      scale: 1,
+      delay: 0,
+      begin: function() {
+        tile.removeAttribute('class')
+        tile.classList.add('ten')
+        console.log('becomes visible then rotate');
+      }
+
+    }, '+=500')
+
   })
 
 
