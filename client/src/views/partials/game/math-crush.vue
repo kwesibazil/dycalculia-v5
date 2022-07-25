@@ -1,96 +1,72 @@
 <template>
   <div class="h-100">
-
     <div  class="game-container d-flex flex-column align-items-center flex-grow-1 mb-2  "> 
-  
       <div class="d-flex justify-content-between align-items-center bg-white shadow-sm p-3 px-5 my-3 w-75">
-        <p class="mb-0">Score:<span class="text-dark">{{score}}</span></p>
-        <!-- <div class="d-none d-sm-block">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-balloon-heart-fill mx-1" :class="life.first ? 'fill-danger' : 'fill-secondary'"  viewBox="0 0 16 16">
-            <path fill-rule="evenodd" d="M8.49 10.92C19.412 3.382 11.28-2.387 8 .986 4.719-2.387-3.413 3.382 7.51 10.92l-.234.468a.25.25 0 1 0 .448.224l.04-.08c.009.17.024.315.051.45.068.344.208.622.448 1.102l.013.028c.212.422.182.85.05 1.246-.135.402-.366.751-.534 1.003a.25.25 0 0 0 .416.278l.004-.007c.166-.248.431-.646.588-1.115.16-.479.212-1.051-.076-1.629-.258-.515-.365-.732-.419-1.004a2.376 2.376 0 0 1-.037-.289l.008.017a.25.25 0 1 0 .448-.224l-.235-.468ZM6.726 1.269c-1.167-.61-2.8-.142-3.454 1.135-.237.463-.36 1.08-.202 1.85.055.27.467.197.527-.071.285-1.256 1.177-2.462 2.989-2.528.234-.008.348-.278.14-.386Z"/>
-          </svg>
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-balloon-heart-fill mx-1" :class="life.second ? 'fill-danger' : 'fill-secondary'"  viewBox="0 0 16 16">
-            <path fill-rule="evenodd" d="M8.49 10.92C19.412 3.382 11.28-2.387 8 .986 4.719-2.387-3.413 3.382 7.51 10.92l-.234.468a.25.25 0 1 0 .448.224l.04-.08c.009.17.024.315.051.45.068.344.208.622.448 1.102l.013.028c.212.422.182.85.05 1.246-.135.402-.366.751-.534 1.003a.25.25 0 0 0 .416.278l.004-.007c.166-.248.431-.646.588-1.115.16-.479.212-1.051-.076-1.629-.258-.515-.365-.732-.419-1.004a2.376 2.376 0 0 1-.037-.289l.008.017a.25.25 0 1 0 .448-.224l-.235-.468ZM6.726 1.269c-1.167-.61-2.8-.142-3.454 1.135-.237.463-.36 1.08-.202 1.85.055.27.467.197.527-.071.285-1.256 1.177-2.462 2.989-2.528.234-.008.348-.278.14-.386Z"/>
-          </svg>
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-balloon-heart-fill mx-1 " :class="life.third ? 'fill-danger' : 'fill-secondary'"  viewBox="0 0 16 16">
-            <path fill-rule="evenodd" d="M8.49 10.92C19.412 3.382 11.28-2.387 8 .986 4.719-2.387-3.413 3.382 7.51 10.92l-.234.468a.25.25 0 1 0 .448.224l.04-.08c.009.17.024.315.051.45.068.344.208.622.448 1.102l.013.028c.212.422.182.85.05 1.246-.135.402-.366.751-.534 1.003a.25.25 0 0 0 .416.278l.004-.007c.166-.248.431-.646.588-1.115.16-.479.212-1.051-.076-1.629-.258-.515-.365-.732-.419-1.004a2.376 2.376 0 0 1-.037-.289l.008.017a.25.25 0 1 0 .448-.224l-.235-.468ZM6.726 1.269c-1.167-.61-2.8-.142-3.454 1.135-.237.463-.36 1.08-.202 1.85.055.27.467.197.527-.071.285-1.256 1.177-2.462 2.989-2.528.234-.008.348-.278.14-.386Z"/>
-          </svg>
-        </div> -->
+        <p class="mb-0">Score:<span class="text-dark">{{game.score}}</span></p>
         <p class="mb-0">Target: <span class="text-danger fw-bold">{{game.target}}</span></p>
       </div>
-
-
-
-
-
-
-
-
       <div id="myGrid" class="grid h-75 rounded rounded-6 my-auto">
-        <div v-for="(tile, index) in gridSize * gridSize" :id="index" :key="index" class="tile-container d-flex justify-content-center align-items-center">
+        <div v-for="(tile, index) in game.size * game.size" :id="index" :key="index" class="tile-container d-flex justify-content-center align-items-center">
           <Tile  @click="onClick" v-touch:swipe="onSwipe" />
         </div>  
       </div>
-      
     </div>
-    
   </div>
 </template>
 
 <script setup>
-  import { ref, onMounted } from 'vue'
-  import {swapTiles, revertY, revertX} from './math-crush'
+  import { reactive, onMounted } from 'vue'
+  import util  from './game-util'
+  import animate  from './animate'
   import Tile from '@/components/misc/tile'
+import { swapTiles } from './math-crush';
 
-  const points = ref(3)
-  const score = ref(0)
-  const gridSize = ref(8)
+
+
+  const game = reactive({
+    size: 8, 
+    score: 0, 
+    points: 3, 
+    target: 130,
+    grid: [],
+    valid: [],
+    invalid: [],
+    replacement: []
+  });
+
+
 
   const tiles = {
     alternate: true,
-    direction: null,
-    dest: {square: null, id:null},
-    source: {square: null, id:null },
-  }
-  const game = {
-    grid: [],
-    target: 130,
-    amount: [10, 20, 50, 100, 500],
-    images: ['ten','twenty','fifty','hundred','five-hundred']
+    dest: {square: null, id:null, amount: null,},
+    source: {square: null, id:null, amount: null},
   }
 
 
   const createGrid = () => {
-    const gameTiles = document.getElementsByClassName('tile')
+    const gameTiles = document.getElementsByClassName('tile-container')
     Array.from(gameTiles).forEach(tile =>{
-      const rand = Math.floor(Math.random() * game.amount.length)
-      const value = game.amount[rand]
-      const bg = game.images[rand]
-      tile.classList.add(bg)
-      tile.setAttribute('data-amount', value)   
-      tile.setAttribute('data-img', bg)   
-      game.grid.push(tile.parentElement)
+      util.addAttributes(tile.firstElementChild)
+      game.grid.push(tile)    
     })
   }
 
-  
+
   const onClick = (e) => {
     const square = e.target.closest('.tile-container') 
     if(tiles.source.square === null){
-      tiles.source.id = parseInt(square.getAttribute('id'))
       tiles.source.square = square
-      square.firstElementChild.firstElementChild.classList.add('selected')
+      tiles.source.id = parseInt(square.getAttribute('id'))
+      square.firstElementChild.firstElementChild.classList.add('source')
     }else setTiles(square)
   }
   
 
-
-
   const onSwipe = (direction, mouseEvent) =>{
     if(tiles.source.square === null){
-      tiles.source.square = mouseEvent.srcElement.closest('.tile-container')
-      tiles.source.square.firstElementChild.firstElementChild.classList.add('selected')
       tiles.source.id = parseInt(tiles.source.square.getAttribute('id'))
+      tiles.source.square = mouseEvent.srcElement.closest('.tile-container')
+      tiles.source.square.firstElementChild.firstElementChild.classList.add('source')
     }else if(tiles.dest.square !== null) return
     
     if(direction === 'top') setTiles(game.grid[tiles.source.id-8])
@@ -108,111 +84,42 @@
     }else return
   }
 
-  
-  const swapValues = () => {
-    const sourceImg =  tiles.source.square.firstElementChild.dataset.img
-    const sourceAmount =  tiles.source.square.firstElementChild.dataset.amount
-    const destImg =  tiles.dest.square.firstElementChild.dataset.img
-    const destAmount =  tiles.dest.square.firstElementChild.dataset.amount
-    
-    console.log('swap values');
-    console.log('source ' + sourceImg);
-    console.log('dest ' + destImg);
-    console.log('source replace '+ sourceImg + ' with ' + destImg);
-    console.log('dest replace '+ destImg + ' with ' + sourceImg);
-
-    tiles.source.square.firstElementChild.classList.replace(sourceImg, destImg)
-    tiles.source.square.firstElementChild.dataset.amount = destAmount
-    tiles.source.square.firstElementChild.dataset.img = destImg
-    tiles.dest.square.firstElementChild.classList.replace(destImg, sourceImg)
-    tiles.dest.square.firstElementChild.dataset.amount = sourceAmount
-    tiles.dest.square.firstElementChild.dataset.img = sourceImg
-  }
-
-  const swapImg = () => {
-    const sourceImg =  tiles.source.square.firstElementChild.dataset.img
-    const destImg =  tiles.dest.square.firstElementChild.dataset.img
-
-    if(!tiles.alternate){
-      console.log('first');
-      console.log('source ' + sourceImg);
-      console.log('dest ' + destImg);
-      console.log('source replace '+ sourceImg + ' with ' + destImg);
-      console.log('dest replace '+ destImg + ' with ' + sourceImg);
-      tiles.source.square.firstElementChild.classList.replace(sourceImg, destImg)
-      tiles.dest.square.firstElementChild.classList.replace(destImg, sourceImg)
-    }
-    else{
-      console.log('second');
-      console.log('source ' + sourceImg);
-      console.log('dest ' + destImg);
-      console.log('source replace '+ sourceImg + ' with ' + destImg);
-      console.log('dest replace '+ destImg + ' with ' + sourceImg);
-
-      tiles.source.square.firstElementChild.classList.replace(destImg, sourceImg)
-      tiles.dest.square.firstElementChild.classList.replace(sourceImg, destImg)
-    }
-
-  }
-
-
-
 
   const validMoves = () =>{
-    const destID = tiles.dest.id
-    const sourceID = tiles.source.id
-    let moves = [sourceID - 1, sourceID + 1, sourceID + 8,sourceID - 8]
-    
-    let validMove = moves.includes(destID)
+    let moves = [tiles.source.id - 1, tiles.source.id + 1, tiles.source.id + 8, tiles.source.id - 8]
+    let validMove = moves.includes(tiles.dest.id)
 
     if(validMove){
-      tiles.alternate = true
-      swapValues()
+      util.swapTilesAmount(tiles)
       checkColStreak()
       checkRowStreak()
-      
-      if(tiles.source.square !== null){
-          swapTiles(tiles)
-          if(tiles.alternate === false){
-            setTimeout(() =>{
-              if(tiles.direction === true) revertY(tiles)
-              else revertX(tiles)
-              tiles.alternate = true
-              swapImg()
-            },500)
-          }
-      }
-      setTimeout(() =>{
-        resetTiles()
-      },1000)
-    }
-    else{
-      tiles.source.square.firstElementChild.firstElementChild.classList.remove('selected')
-      tiles.source.id = tiles.dest.id
+      //markedTiles()
+     
+      util.reset(tiles)
+    } 
+    else {
+      tiles.source.square.firstElementChild.firstElementChild.classList.remove('source')
       tiles.source.square = tiles.dest.square
+      tiles.source.square.firstElementChild.firstElementChild.classList.add('source')
+      tiles.source.id = tiles.dest.id
       tiles.dest.id = null
       tiles.dest.square = null
-      tiles.source.square.firstElementChild.firstElementChild.classList.add('selected')
     }
   }
-
 
   const checkRowStreak = () =>{
     for(let i=0; i<62; i++){
-      let total = 0
-      let row = [i, i+1, i+2]
-      
+      let total = 0, row = [i, i+1, i+2]
       const inValid = [6,7,14,15,22,23,30,31,38,39,46,47,54,55]
+
       if (inValid.includes(i)) continue
       row.forEach(index => total+= parseInt(game.grid[index].firstElementChild.dataset.amount))
-
       if(total === game.target){
-        tiles.alternate = false
-        if(tiles.source.square !== null){
-          swapImg()
-          score.value += points.value
-        }
-        row.forEach(square => replaceTiles(square))
+        row.forEach(id => {
+          game.grid[id].firstElementChild.setAttribute('data-marked', 0)
+          game.grid[id].firstElementChild.setAttribute('data-skip', 0)
+        })
+        addPoints(row)
       }
     }
   }
@@ -226,41 +133,91 @@
       col.forEach(index => total+= parseInt(game.grid[index].firstElementChild.dataset.amount))
 
       if(total === game.target){
-        tiles.alternate = false
-        
-        if(tiles.source.square !== null){
-          swapImg()
-          score.value += points.value
-        }
-        col.forEach(square => replaceTiles(square))
+        game.grid[col[2]].firstElementChild.setAttribute('data-marked', 0)
+        game.grid[col[2]].firstElementChild.setAttribute('data-skip', 0)
+        addPoints(col)
       }
     }
   }
 
 
+  const markedTiles = () => {
+    const invalid = document.getElementsByClassName('marked')
+    Array.from(invalid).forEach(tile => game.invalid.push(tile))
+    game.invalid.reverse()
+  
+    game.invalid.forEach(index =>{
+      let amount = parseInt(index.parentElement.getAttribute('id'))
+      while(amount >= 0){
+        game.replacement.push(document.getElementById(amount).firstElementChild)
+        if(parseInt(game.grid[amount].firstElementChild.dataset.amount) > 0)game.valid.push(document.getElementById(amount).firstElementChild)
+        amount -= game.size
+      }
+    })
 
-  const replaceTiles = square => {
-    const rand = Math.floor(Math.random() * game.amount.length)
-    const value = game.amount[rand]
-    const bg = game.images[rand]
+    game.replacement = [...new Set(game.replacement)]
+    game.valid = [...new Set(game.valid)]
 
-    setTimeout(_ =>{
-      game.grid[square].firstElementChild.classList.replace(game.grid[square].firstElementChild.dataset.img, 'bg-white')
-      game.grid[square].firstElementChild.dataset.amount = 0
-      game.grid[square].firstElementChild.dataset.img = 'bg-white'
-    }, 1000)
+    const marked = game.replacement.filter(marked => marked.hasAttribute('data-marked'))
+    marked.forEach(elem => {
+      const elemID = parseInt(elem.parentElement.getAttribute('id'))
+      let belowID = parseInt(elem.parentElement.getAttribute('id')) + 8
+      const end = parseInt(game.replacement[0].parentElement.getAttribute('id'))
 
+
+
+      while(belowID <= end){
+
+          if(marked.includes(document.getElementById(belowID).firstElementChild)){
+            // console.log(marked.includes(document.getElementById(belowID).firstElementChild));
+            // console.log('marked is true');
+            // console.log(document.getElementById(belowID).firstElementChild)
+            // document.getElementById(belowID).classList.add('bg-white');
+            // console.log(elem);
+            // elem.parentElement.classList.add('bg-danger');
+            elem.removeAttribute('data-marked', 'data-skip')
+            
+          }
+          //console.log(belowID);
+          //document.getElementById(belowID).classList.add('bg-white')
+      //   //document.getElementById('bg-danger')
+      //   //.classList.add('bg-danger')
+      //   // console.log(document.getElementById(elemID));
+      //   // console.log(document.getElementById(belowID));
+      //   //const below = belowID - 8
+      //   //console.log(below);
+          belowID += 8
+      //   //elem.parentElement.classList.add('bg-white')
+      }
+      
+      //console.log(elemID)
+      
+      //console.log(elemID);
+
+
+      // elem.parentElement.classList.add('bg-white')
+      
+      // // console.log(`${belowID} % ${elemID} = ${belowID % elemID}`);
+      // if(belowID <= end && end % elemID ){
+      //     elem.parentElement.classList.add('bg-danger')
+      //   // console.log(`${belowID} - ${elemID} = ${belowID - elemID}`);
+      //   // console.log(elem);
+      //   // console.log(document.getElementById(belowID).firstElementChild);
+      // }
+    })
+    
+
+   animate.dropTiles(game.replacement, game.valid, game.invalid)
   }
 
 
-
-  const resetTiles = () =>{
-    tiles.source.square.firstElementChild.firstElementChild.classList.remove('selected')
-    tiles.source.square = null
-    tiles.source.id = null
-    tiles.dest.square = null
-    tiles.dest.id = null
-    tiles.alternate = true
+  const addPoints =  (streak) => {
+    tiles.alternate = false
+    streak.forEach(id => {
+      const target = game.grid[id].firstElementChild
+      target.dataset.amount = 0
+      target.classList.add('marked') 
+    })
   }
 
   
@@ -268,6 +225,8 @@
     createGrid()
     checkColStreak()
     checkRowStreak()
+    markedTiles()
+
   })
 
 
@@ -280,8 +239,21 @@
 
 
 
-
-
+ // const addPoints =  (streak) => {
+  //   tiles.alternate = false
+  //   setTimeout(() => {
+  //     streak.forEach(id => {
+  //       const tile = game.grid[id].firstElementChild
+  //       tile.removeAttribute('class')
+  //       tile.classList.add('bomb')
+  //       console.log('add bomb');
+  //       setTimeout(() => {
+  //         tile.classList.add('invisible')
+  //         console.log('tiles fall');
+  //         }, 700)
+  //     })
+  //   },500)
+  // }
 
 </script>
 
@@ -307,4 +279,7 @@
     width: 12.5%;
     height: 12.5%;
   }
+
+
+
 </style>

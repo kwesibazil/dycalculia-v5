@@ -12,13 +12,16 @@ const swapTiles = tiles =>{
 }
 
 const slideUp = (distance, tiles) =>{
-  tiles.direction = true
   anime({
     targets: tiles.source.square,
     translateY: -distance,
     direction: (tiles.alternate === true) ? 'alternate' : 'normal',
     duration: 500,
-    easing: 'easeInSine'
+    easing: 'easeInSine',
+    begin: function() {
+      console.log('swap begin');
+      swapBegin(tiles)
+    }
   });
 
   anime({
@@ -26,18 +29,25 @@ const slideUp = (distance, tiles) =>{
     translateY: distance,
     direction: (tiles.alternate === true) ? 'alternate' : 'normal',
     duration: 500,
-    easing: 'easeInSine'
+    easing: 'easeInSine',
+    complete: function() {
+      console.log('swap end');
+      swapComplete(tiles)
+    }
   });
 }
 
 const slideDown = (distance, tiles) =>{
-  tiles.direction = true
   anime({
     targets: tiles.source.square,
     translateY: distance,
     direction: (tiles.alternate === true) ? 'alternate' : 'normal',
     duration: 500,
-    easing: 'easeInSine'
+    easing: 'easeInSine',
+    begin: function() {
+      console.log('swap begin');
+      swapBegin(tiles)
+    }
   });
 
   anime({
@@ -45,19 +55,26 @@ const slideDown = (distance, tiles) =>{
     translateY: -distance,
     direction: (tiles.alternate === true) ? 'alternate' : 'normal',
     duration: 500,
-    easing: 'easeInSine'
+    easing: 'easeInSine',
+    complete: function() {
+      console.log('swap end');
+      swapComplete(tiles)
+    }
   });
 }
 
 
 const slideLeft = (distance, tiles) =>{
-  tiles.direction = false
   anime({
     targets: tiles.source.square,
     translateX: -distance,
     direction: (tiles.alternate === true) ? 'alternate' : 'normal',
     duration: 500,
-    easing: 'easeInSine'
+    easing: 'easeInSine',
+    begin: function() {
+      console.log('swap begin');
+      swapBegin(tiles)
+    }
   });
 
   anime({
@@ -65,18 +82,25 @@ const slideLeft = (distance, tiles) =>{
     translateX: distance,
     direction: (tiles.alternate === true) ? 'alternate' : 'normal',
     duration: 500,
-    easing: 'easeInSine'
+    easing: 'easeInSine',
+    complete: function() {
+      console.log('swap end');
+      swapComplete(tiles)
+    }
   });
 }
 
 const slideRight = (distance, tiles) => { 
-  tiles.direction = false
   anime({
     targets: tiles.source.square,
     translateX: distance,
     direction: (tiles.alternate === true) ? 'alternate' : 'normal',
-  duration: 500,
-    easing: 'easeInSine'
+    duration: 500,
+    easing: 'easeInSine',
+    begin: function() {
+      console.log('swap begin');
+      swapBegin(tiles)
+    }
   });
 
   anime({
@@ -84,7 +108,11 @@ const slideRight = (distance, tiles) => {
     translateX: -distance,
     direction: (tiles.alternate === true) ? 'alternate' : 'normal',
     duration: 500,
-    easing: 'easeInSine'
+    easing: 'easeInSine',
+    complete: function() {
+      console.log('swap end');
+      swapComplete(tiles)
+    }
   });
 }
 
@@ -95,7 +123,8 @@ const revertY = (tiles) =>{
     translateY: 0,
     direction: 'normal',
     duration: 10,
-    easing: 'easeInSine'
+    easing: 'easeInSine',
+    complete: function() { swapComplete(tiles) }
   });
 }
 
@@ -106,10 +135,37 @@ const revertX = (tiles) =>{
     translateX: 0,
     direction: 'normal',
     duration: 10,
-    easing: 'easeInSine'
+    easing: 'easeInSine',
+    complete: function() { swapComplete(tiles) }
   });
 }
 
+const swapComplete = (tiles) =>{
+  console.log('reset tiles');
+
+  if(tiles.alternate !== true)
+    revertX(tiles)
+
+  resetTiles(tiles)
+  //tiles.source.square.firstElementChild.classList.replace(tiles.dest.square.firstElementChild.dataset.img, tiles.source.square.firstElementChild.dataset.img)
+  //tiles.dest.square.firstElementChild.classList.replace(tiles.source.square.firstElementChild.dataset.img,  tiles.dest.square.firstElementChild.dataset.img)
+}
+
+const swapBegin = (tiles) =>{
+  console.log('re-swap amount');
+  const temp = tiles.source.square.firstElementChild.dataset.amount
+  tiles.source.square.firstElementChild.dataset.amount = tiles.dest.square.firstElementChild.dataset.amount
+  tiles.dest.square.firstElementChild.dataset.amount = temp
+}
 
 
+const resetTiles = (tiles) => {
+  console.log('resetting tiles values');
+  tiles.source.square.firstElementChild.firstElementChild.classList.remove('selected')
+  tiles.source.square = null
+  tiles.dest.square = null
+  tiles.source.id = null
+  tiles.alternate = true
+  tiles.dest.id = null
+}
 export {swapTiles, revertY, revertX }

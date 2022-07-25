@@ -181,41 +181,97 @@ input::-ms-clear {
 }
 
 
-.selected{
+
+.fifty{
+  background-color: var(--bs-danger);
+  background-image: url('@/assets/img/fifty.png');
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  height: 75% !important;
+  width: 75% !important;
+  position: relative !important;
+  border-radius: 50% !important;
+  border-top-left-radius: 50% !important;
+  border-top-right-radius: 50% !important;
+  border-bottom-right-radius: 50% !important;
+  border-bottom-left-radius: 50% !important;
+}
+.ten{
+  background-color: var(--bs-pink);
+  background-image: url('@/assets/img/ten.png');
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  height: 75% !important;
+  width: 75% !important;
+  position: relative !important;
+  border-radius: 50% !important;
+  border-top-left-radius: 50% !important;
+  border-top-right-radius: 50% !important;
+  border-bottom-right-radius: 50% !important;
+  border-bottom-left-radius: 50% !important;
+}
+
+.hundred{
+  background-color: var(--bs-success);
+  background-image: url('@/assets/img/hundred.png');
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  height: 75% !important;
+  width: 75% !important;
+  position: relative !important;
+  border-radius: 50% !important;
+  border-top-left-radius: 50% !important;
+  border-top-right-radius: 50% !important;
+  border-bottom-right-radius: 50% !important;
+  border-bottom-left-radius: 50% !important;
+}
+.five-hundred{
+  background-color: var(--bs-purple);
+  background-image: url('@/assets/img/fiveHundred.png');
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  height: 75% !important;
+  width: 75% !important;
+  position: relative !important;
+  border-radius: 50% !important;
+  border-top-left-radius: 50% !important;
+  border-top-right-radius: 50% !important;
+  border-bottom-right-radius: 50% !important;
+  border-bottom-left-radius: 50% !important;
+}
+.twenty{
+  background-color: var(--bs-warning);
+  background-image: url('@/assets/img/twenty.png');
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  height: 75% !important;
+  width: 75% !important;
+  position: relative !important;
+  border-radius: 50% !important;
+  border-top-left-radius: 50% !important;
+  border-top-right-radius: 50% !important;
+  border-bottom-right-radius: 50% !important;
+  border-bottom-left-radius: 50% !important;
+}
+
+
+.source{
   background-image: url('@/assets/img/selected.png');
   background-size: 100% 100%;
   background-repeat: no-repeat;
 }
 
-.fifty{
-  background-image: url('@/assets/img/fifty.png');
+  
+.bomb{
+  background-image: url('@/assets/img/explosion-boom.gif');
   background-size: 100% 100%;
   background-repeat: no-repeat;
-  background-color: var(--bs-danger);
-}
-.ten{
-  background-image: url('@/assets/img/ten.png');
-  background-size: 100% 100%;
-  background-repeat: no-repeat;
-  background-color: var(--bs-pink);
-}
-
-.hundred{
-  background-image: url('@/assets/img/hundred.png');
-  background-size: 100% 100%;
-  background-repeat: no-repeat;
-  background-color: var(--bs-success);
-}
-.five-hundred{
-  background-image: url('@/assets/img/fiveHundred.png');
-  background-size: 100% 100%;
-  background-repeat: no-repeat;
-  background-color: var(--bs-purple);
-}
-.twenty{
-  background-image: url('@/assets/img/twenty.png');
-  background-size: 100% 100%;
-  background-repeat: no-repeat;
-  background-color: var(--bs-warning);
-
+  height: 75% !important;
+  width: 75% !important;
+  position: relative !important;
+  border-radius: 50% !important;
+  border-top-left-radius: 50% !important;
+  border-top-right-radius: 50% !important;
+  border-bottom-right-radius: 50% !important;
+  border-bottom-left-radius: 50% !important;
 }
