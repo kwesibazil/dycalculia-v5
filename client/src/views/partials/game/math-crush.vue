@@ -2,12 +2,13 @@
   <div class="h-100">
     <div  class="game-container d-flex flex-column align-items-center flex-grow-1 mb-2  "> 
       <div class="d-flex justify-content-between align-items-center bg-white shadow-sm p-3 px-5 my-3 w-75">
-        <p class="mb-0">Score:<span class="text-dark">{{game.score}}</span></p>
-        <p class="mb-0">Target: <span class="text-danger fw-bold">{{game.target}}</span></p>
+        <!-- <p class="mb-0">Score:<span class="text-dark">{{game.score}}</span></p>
+        <p class="mb-0">Target: <span class="text-danger fw-bold">{{game.target}}</span></p> -->
       </div>
       <div id="myGrid" class="grid h-75 rounded rounded-6 my-auto">
         <div v-for="(tile, index) in game.size * game.size" :id="index" :key="index" class="tile-container d-flex justify-content-center align-items-center">
-          <Tile  @click="onClick" v-touch:swipe="onSwipe" />
+          <Tile   />
+          <!-- @click="onClick" v-touch:swipe="onSwipe" -->
         </div>  
       </div>
     </div>
@@ -15,225 +16,222 @@
 </template>
 
 <script setup>
-  import { reactive, onMounted } from 'vue'
-  import util  from './game-util'
-  import animate  from './animate'
+  import crush from './crush'
+  import animation from './animation'
   import Tile from '@/components/misc/tile'
-import { swapTiles } from './math-crush';
+  import { reactive, onMounted } from 'vue'
 
-
-
+  const values = [
+    {amount : 10,css: 'ten'},
+    {amount : 50,css: 'fifty'},
+    {amount : 20,css: 'twenty'},
+    {amount : 100,css: 'one-hundred'},
+    {amount : 500,css: 'five-hundred'},
+  ]
   const game = reactive({
-    size: 8, 
-    score: 0, 
-    points: 3, 
-    target: 130,
+    size: 8,
     grid: [],
-    valid: [],
-    invalid: [],
-    replacement: []
-  });
+    stats: {
+      lvl: 1,
+      points: 3,
+      target: 130
+    }
+  })
 
-
-
-  const tiles = {
-    alternate: true,
-    dest: {square: null, id:null, amount: null,},
-    source: {square: null, id:null, amount: null},
+  const init = () => {
+    crush.createGrid(game.grid)
+    crush.newTiles(game.grid, values)
+    crush.findStreak(game.stats, game.grid)
+    getReplacementTiles()
   }
 
-
-  const createGrid = () => {
-    const gameTiles = document.getElementsByClassName('tile-container')
-    Array.from(gameTiles).forEach(tile =>{
-      util.addAttributes(tile.firstElementChild)
-      game.grid.push(tile)    
-    })
-  }
-
-
-  const onClick = (e) => {
-    const square = e.target.closest('.tile-container') 
-    if(tiles.source.square === null){
-      tiles.source.square = square
-      tiles.source.id = parseInt(square.getAttribute('id'))
-      square.firstElementChild.firstElementChild.classList.add('source')
-    }else setTiles(square)
-  }
   
+const getReplacementTiles = () =>{
+  let markedArr = [], replaceArr = [],  validArr = [], invalidArr = [], updateArr = []
 
-  const onSwipe = (direction, mouseEvent) =>{
-    if(tiles.source.square === null){
-      tiles.source.id = parseInt(tiles.source.square.getAttribute('id'))
-      tiles.source.square = mouseEvent.srcElement.closest('.tile-container')
-      tiles.source.square.firstElementChild.firstElementChild.classList.add('source')
-    }else if(tiles.dest.square !== null) return
-    
-    if(direction === 'top') setTiles(game.grid[tiles.source.id-8])
-    else if(direction === 'left')setTiles(game.grid[tiles.source.id-1])
-    else if(direction === 'right')setTiles(game.grid[tiles.source.id+1])
-    else if(direction === 'bottom')setTiles(game.grid[tiles.source.id+8])
-  }
+  const markedTiles = document.getElementsByClassName('marked')
+  Array.from(markedTiles).forEach(tile => markedArr.push(tile))
+  markedArr.reverse()
 
-  const setTiles = square => {
-    const id = parseInt(square.getAttribute('id'))
-    if(tiles.source.square !== null && tiles.dest.square === null && tiles.source.square !== square ){
-      tiles.dest.id = id
-      tiles.dest.square = square
-      validMoves()  
-    }else return
-  }
-
-
-  const validMoves = () =>{
-    let moves = [tiles.source.id - 1, tiles.source.id + 1, tiles.source.id + 8, tiles.source.id - 8]
-    let validMove = moves.includes(tiles.dest.id)
-
-    if(validMove){
-      util.swapTilesAmount(tiles)
-      checkColStreak()
-      checkRowStreak()
-      util.reset(tiles)
-    } 
-    else {
-      tiles.source.square.firstElementChild.firstElementChild.classList.remove('source')
-      tiles.source.square = tiles.dest.square
-      tiles.source.square.firstElementChild.firstElementChild.classList.add('source')
-      tiles.source.id = tiles.dest.id
-      tiles.dest.id = null
-      tiles.dest.square = null
+  markedArr.forEach(tile => {
+    //tile.classList.remove('marked', 'bomb')
+    let parentID = parseInt(tile.parentElement.getAttribute('id'))
+    while(parentID >= 0){
+      replaceArr.push(game.grid[parentID])
+      if(parseInt(game.grid[parentID].firstElementChild.dataset.amount) > 0)validArr.push(game.grid[parentID])
+      parentID -=8
     }
-  }
+  })
 
-  const checkRowStreak = () =>{
-    for(let i=0; i<62; i++){
-      let total = 0, row = [i, i+1, i+2]
-      const inValid = [6,7,14,15,22,23,30,31,38,39,46,47,54,55]
-
-      if (inValid.includes(i)) continue
-      row.forEach(index => total+= parseInt(game.grid[index].firstElementChild.dataset.amount))
-      if(total === game.target)addPoints(row)
-    }
-  }
-
-  const checkColStreak = () => {  
-    for(let i = 0; i<48; i++){
-      let total = 0
-      let col = [i, i+8, i+8*2]
-      col.forEach(index => total+= parseInt(game.grid[index].firstElementChild.dataset.amount))
-      if(total === game.target)addPoints(col)
-      
-    }
-  }
+  //remove duplicates values
+  replaceArr = [...new Set(replaceArr)]
+  validArr = [...new Set(validArr)]
+  crush.calculateDown(validArr, game.grid)
+  crush.findReplaceTiles(replaceArr, game.grid)
+  crush.getTilesByClassName(invalidArr, 'replace')
+  crush.getTilesByClassName(updateArr, 'update')
 
 
-    const markedTiles = () => {
-      const invalid = document.getElementsByClassName('marked')
-      Array.from(invalid).forEach(tile => game.invalid.push(tile.parentElement))
-      game.invalid.reverse()
-    
-      game.invalid.forEach(elem =>{
-        let id = parseInt(elem.getAttribute('id'))
-        while(id >= 0){
-          game.replacement.push(game.grid[id])
-          if(parseInt(game.grid[id].firstElementChild.dataset.amount) > 0)game.valid.push(document.getElementById(id))
-          id -= game.size
-        }
-      })
+  //animate
+  animation.growAndExplode(markedArr)
+  animation.drop(validArr)
 
-      game.replacement = [...new Set(game.replacement)]
-      game.valid = [...new Set(game.valid)]
-    
-      game.valid.forEach(elem => {
-        //elem.classList.add('bg-white')
-        let step = 0, id = parseInt(elem.getAttribute('id'))
-        while(id < 64){
-          if(parseInt(game.grid[id].firstElementChild.dataset.amount) === 0)step++
-          id +=8
-        }
-        elem.firstElementChild.setAttribute('data-skip', step)
-      })
+  invalidArr.forEach(tile => tile.parentElement.classList.add('bg-danger'))
 
-     // game.replacement.reverse()
 
-      console.log('first');
-      game.replacement.forEach(elem =>{
-        const top = [0,1,2,3,4,5,6,7]
-        const  elemID = parseInt(elem.getAttribute('id'))
-        let ID = elemID
+
+  setTimeout(()=>{
+    crush.updateTiles(updateArr)
+  },3000)
+
+  //updateArr.forEach(tile => tile.parentElement.classList.add('bg-success'))
   
-        while(ID >=  0){
-          try{
-        
-            ID -= 8
-            if(top.includes(elemID) || ID < 0) {
-              // console.log(elem);
-              // console.log('everything above should be empty');
-              elem.classList.add('bg-danger', 'replace')
-              break
-            }
-
-
-            //console.log(`checking if ${parseInt(game.grid[ID].firstElementChild.dataset.amount)} > 0`);
-
-            if(parseInt(game.grid[ID].firstElementChild.dataset.amount) > 0){
-              elem.firstElementChild.dataset.amount = game.grid[ID].firstElementChild.dataset.amount 
-              game.grid[ID].firstElementChild.dataset.amount = 0
-              break
-            }
-
-
-
-
-          }catch{
-            console.log('error');
-            console.log(ID);
-          }
-            
-        }
-        //console.log(elem);
-        //elem.classList.add('bg-info')
-
-      })
-
-      //console.log('second');
-
-      const needsVales = document.getElementsByClassName('replace')
-      Array.from(needsVales).forEach(tile => console.log(tile))
-     
-    
-    animate.dropTiles(game.replacement, game.valid, game.invalid)
-  }
-
-
-const newTiles = (tiles) => {
-  console.log('swapping source and dest amount values only not background image');
-  const temp = tiles.source.square.firstElementChild.dataset.amount
-  tiles.source.square.firstElementChild.dataset.amount = tiles.dest.square.firstElementChild.dataset.amount
-  tiles.dest.square.firstElementChild.dataset.amount = temp
+  
+  
 }
 
 
 
+  onMounted(() =>{
+    init()
+  })
 
 
-  const addPoints =  (streak) => {
-    tiles.alternate = false
-    streak.forEach(id => {
-      const target = game.grid[id].firstElementChild
-      target.dataset.amount = 0
-      target.classList.add('marked', 'bomb') 
-    })
-  }
+
+  // const game = reactive({
+  //   size: 8, 
+  //   score: 0, 
+  //   points: 3, 
+  //   target: 130,
+  //   grid: [],
+  //   valid: [],
+  //   invalid: [],
+  //   replacement: []
+  // });
+
+
+
+  // const tiles = {
+  //   alternate: true,
+  //   dest: {square: null, id:null, amount: null,},
+  //   source: {square: null, id:null, amount: null},
+  // }
+
+
+
+  // const init = () => {
+  //   game.game.grid
+  // }
 
   
-  onMounted(_ =>{
-    createGrid()
-    checkColStreak()
-    checkRowStreak()
-    markedTiles()
 
-  })
+
+  // const onClick = (e) => {
+  //   const square = e.target.closest('.tile-container') 
+  //   if(tiles.source.square === null){
+  //     tiles.source.square = square
+  //     tiles.source.id = parseInt(square.getAttribute('id'))
+  //     square.firstElementChild.firstElementChild.classList.add('source')
+  //   }else setTiles(square)
+  // }
+  
+
+  // const onSwipe = (direction, mouseEvent) =>{
+  //   if(tiles.source.square === null){
+  //     tiles.source.id = parseInt(tiles.source.square.getAttribute('id'))
+  //     tiles.source.square = mouseEvent.srcElement.closest('.tile-container')
+  //     tiles.source.square.firstElementChild.firstElementChild.classList.add('source')
+  //   }else if(tiles.dest.square !== null) return
+    
+  //   if(direction === 'top') setTiles(game.grid[tiles.source.id-8])
+  //   else if(direction === 'left')setTiles(game.grid[tiles.source.id-1])
+  //   else if(direction === 'right')setTiles(game.grid[tiles.source.id+1])
+  //   else if(direction === 'bottom')setTiles(game.grid[tiles.source.id+8])
+  // }
+
+  
+
+
+ 
+
+
+
+
+  //   const markedTiles = () => {
+  //     const invalid = document.getElementsByClassName('marked')
+  //     Array.from(invalid).forEach(tile => game.invalid.push(tile.parentElement))
+  //     game.invalid.reverse()
+    
+  //     game.invalid.forEach(elem =>{
+  //       let id = parseInt(elem.getAttribute('id'))
+  //       while(id >= 0){
+  //         game.replacement.push(game.grid[id])
+  //         if(parseInt(game.grid[id].firstElementChild.dataset.amount) > 0)game.valid.push(document.getElementById(id))
+  //         id -= game.size
+  //       }
+  //     })
+
+  //     game.replacement = [...new Set(game.replacement)]
+  //     game.valid = [...new Set(game.valid)]
+    
+  //     game.valid.forEach(elem => {
+  //       //elem.classList.add('bg-white')
+  //       let step = 0, id = parseInt(elem.getAttribute('id'))
+  //       while(id < 64){
+  //         if(parseInt(game.grid[id].firstElementChild.dataset.amount) === 0)step++
+  //         id +=8
+  //       }
+  //       elem.firstElementChild.setAttribute('data-skip', step)
+  //     })
+
+  //    // game.replacement.reverse()
+
+  //     console.log('first');
+  //     game.replacement.forEach(elem =>{
+  //       const top = [0,1,2,3,4,5,6,7]
+  //       const  elemID = parseInt(elem.getAttribute('id'))
+  //       let ID = elemID
+  
+  //       while(ID >=  0){
+  //           ID -= 8
+  //           if(top.includes(elemID) || ID < 0) {
+  //             elem.classList.add('replace')
+  //             break
+  //           }
+
+  //           if(parseInt(game.grid[ID].firstElementChild.dataset.amount) > 0){
+  //             elem.firstElementChild.dataset.amount = game.grid[ID].firstElementChild.dataset.amount 
+  //             game.grid[ID].firstElementChild.dataset.amount = 0
+  //             break
+  //           }
+            
+  //       }
+  //     })
+
+    
+  //     const needsVales = document.getElementsByClassName('replace')
+  //     Array.from(needsVales).forEach(tile => console.log(tile))
+     
+    
+  //   animate.dropTiles(game.replacement, game.valid, game.invalid)
+  // }
+
+
+
+
+
+
+
+  
+
+  
+  // onMounted(_ =>{
+  //   createGrid()
+  //   checkColStreak()
+  //   checkRowStreak()
+  //   //markedTiles()
+
+  // })
 
 
 
