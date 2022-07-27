@@ -95,14 +95,14 @@ const findReplaceTiles = (tiles, grid) => {
     let currentID = tileID
     while(currentID >= 0){
       currentID -= 8
-      if(gridTop.includes(tileID) || currentID < 0){  //reach the top || gone out of bounce
+      if(gridTop.includes(tileID) || currentID < 0){    //reach the top || gone out of bounce
         tile.firstElementChild.classList.add('replace') 
         break
       }
-      else if(parseInt(grid[currentID].firstElementChild.dataset.amount) > 0){
+      if(parseInt(grid[currentID].firstElementChild.dataset.amount) > 0){
         tile.firstElementChild.dataset.amount = grid[currentID].firstElementChild.dataset.amount
         grid[currentID].firstElementChild.dataset.amount = 0
-        tile.firstElementChild.classList.add('update') 
+        tile.firstElementChild.classList.add( 'update') 
         break
       }
     }
@@ -117,10 +117,8 @@ const getTilesByClassName = (arr, className) =>{
 
 const updateTiles = tiles => {
   tiles.forEach(tile => {
-    //tile.removeAttribute('class')
+    tile.removeAttribute('class')
     const className = parseInt(tile.dataset.amount)
-
-    console.log('remove old class and update to new class');
 
     switch(className) {
       case 10:
@@ -141,10 +139,6 @@ const updateTiles = tiles => {
       default:
         tile.classList.add('coin', 'bg-danger')
     }
-
-  
-    // console.log(className);
-    // console.log(tile);
   })
 }
 

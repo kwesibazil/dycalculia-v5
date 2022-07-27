@@ -41,59 +41,51 @@
   const init = () => {
     crush.createGrid(game.grid)
     crush.newTiles(game.grid, values)
-    crush.findStreak(game.stats, game.grid)
+    crush.findStreak(game.stats, game.grid)  //points returned here
     getReplacementTiles()
   }
 
-  
-const getReplacementTiles = () =>{
-  let markedArr = [], replaceArr = [],  validArr = [], invalidArr = [], updateArr = []
+    
+  const getReplacementTiles = () =>{
+    let markedArr = [], replaceArr = [],  validArr = [], invalidArr = [], updateArr = []
 
-  const markedTiles = document.getElementsByClassName('marked')
-  Array.from(markedTiles).forEach(tile => markedArr.push(tile))
-  markedArr.reverse()
+    const markedTiles = document.getElementsByClassName('marked')
+    Array.from(markedTiles).forEach(tile => markedArr.push(tile))
+    markedArr.reverse()
 
-  markedArr.forEach(tile => {
-    //tile.classList.remove('marked', 'bomb')
-    let parentID = parseInt(tile.parentElement.getAttribute('id'))
-    while(parentID >= 0){
-      replaceArr.push(game.grid[parentID])
-      if(parseInt(game.grid[parentID].firstElementChild.dataset.amount) > 0)validArr.push(game.grid[parentID])
-      parentID -=8
-    }
-  })
+    markedArr.forEach(tile => {
+      let parentID = parseInt(tile.parentElement.getAttribute('id'))
+      while(parentID >= 0){
+        replaceArr.push(game.grid[parentID])
+        if(parseInt(game.grid[parentID].firstElementChild.dataset.amount) > 0)validArr.push(game.grid[parentID])
+        parentID -=8
+      }
+    })
 
-  //remove duplicates values
-  replaceArr = [...new Set(replaceArr)]
-  validArr = [...new Set(validArr)]
-  crush.calculateDown(validArr, game.grid)
-  crush.findReplaceTiles(replaceArr, game.grid)
-  crush.getTilesByClassName(invalidArr, 'replace')
-  crush.getTilesByClassName(updateArr, 'update')
+    //remove duplicates values
+    replaceArr = [...new Set(replaceArr)]
+    validArr = [...new Set(validArr)]
+    crush.calculateDown(validArr, game.grid)
 
 
-  //animate
-  animation.growAndExplode(markedArr)
-  animation.drop(validArr)
+    //debugger;
+    animation.growAndExplode(markedArr)
+    animation.drop(validArr)
 
-  invalidArr.forEach(tile => tile.parentElement.classList.add('bg-danger'))
-
-
-
-  setTimeout(()=>{
-    crush.updateTiles(updateArr)
-  },3000)
-
-  //updateArr.forEach(tile => tile.parentElement.classList.add('bg-success'))
-  
-  
-  
-}
+      setTimeout(()=>{
+        crush.findReplaceTiles(replaceArr, game.grid)
+        crush.getTilesByClassName(invalidArr, 'replace')
+        crush.getTilesByClassName(updateArr, 'update')
+        invalidArr.forEach(tile => tile.removeAttribute('class'))
+        crush.updateTiles(updateArr)
+        animation.removeTranslate(validArr)
+      },2000)  
+  }
 
 
 
   onMounted(() =>{
-    init()
+  init()
   })
 
 
@@ -119,11 +111,6 @@ const getReplacementTiles = () =>{
 
 
 
-  // const init = () => {
-  //   game.game.grid
-  // }
-
-  
 
 
   // const onClick = (e) => {
@@ -155,75 +142,6 @@ const getReplacementTiles = () =>{
  
 
 
-
-
-  //   const markedTiles = () => {
-  //     const invalid = document.getElementsByClassName('marked')
-  //     Array.from(invalid).forEach(tile => game.invalid.push(tile.parentElement))
-  //     game.invalid.reverse()
-    
-  //     game.invalid.forEach(elem =>{
-  //       let id = parseInt(elem.getAttribute('id'))
-  //       while(id >= 0){
-  //         game.replacement.push(game.grid[id])
-  //         if(parseInt(game.grid[id].firstElementChild.dataset.amount) > 0)game.valid.push(document.getElementById(id))
-  //         id -= game.size
-  //       }
-  //     })
-
-  //     game.replacement = [...new Set(game.replacement)]
-  //     game.valid = [...new Set(game.valid)]
-    
-  //     game.valid.forEach(elem => {
-  //       //elem.classList.add('bg-white')
-  //       let step = 0, id = parseInt(elem.getAttribute('id'))
-  //       while(id < 64){
-  //         if(parseInt(game.grid[id].firstElementChild.dataset.amount) === 0)step++
-  //         id +=8
-  //       }
-  //       elem.firstElementChild.setAttribute('data-skip', step)
-  //     })
-
-  //    // game.replacement.reverse()
-
-  //     console.log('first');
-  //     game.replacement.forEach(elem =>{
-  //       const top = [0,1,2,3,4,5,6,7]
-  //       const  elemID = parseInt(elem.getAttribute('id'))
-  //       let ID = elemID
-  
-  //       while(ID >=  0){
-  //           ID -= 8
-  //           if(top.includes(elemID) || ID < 0) {
-  //             elem.classList.add('replace')
-  //             break
-  //           }
-
-  //           if(parseInt(game.grid[ID].firstElementChild.dataset.amount) > 0){
-  //             elem.firstElementChild.dataset.amount = game.grid[ID].firstElementChild.dataset.amount 
-  //             game.grid[ID].firstElementChild.dataset.amount = 0
-  //             break
-  //           }
-            
-  //       }
-  //     })
-
-    
-  //     const needsVales = document.getElementsByClassName('replace')
-  //     Array.from(needsVales).forEach(tile => console.log(tile))
-     
-    
-  //   animate.dropTiles(game.replacement, game.valid, game.invalid)
-  // }
-
-
-
-
-
-
-
-  
-
   
   // onMounted(_ =>{
   //   createGrid()
@@ -234,30 +152,6 @@ const getReplacementTiles = () =>{
   // })
 
 
-
-  
-
-
-
-
-
-
-
- // const addPoints =  (streak) => {
-  //   tiles.alternate = false
-  //   setTimeout(() => {
-  //     streak.forEach(id => {
-  //       const tile = game.grid[id].firstElementChild
-  //       tile.removeAttribute('class')
-  //       tile.classList.add('bomb')
-  //       console.log('add bomb');
-  //       setTimeout(() => {
-  //         tile.classList.add('invisible')
-  //         console.log('tiles fall');
-  //         }, 700)
-  //     })
-  //   },500)
-  // }
 
 </script>
 
@@ -283,7 +177,5 @@ const getReplacementTiles = () =>{
     width: 12.5%;
     height: 12.5%;
   }
-
-
 
 </style>

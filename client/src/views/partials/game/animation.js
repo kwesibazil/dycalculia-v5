@@ -1,8 +1,6 @@
 import anime from 'animejs/lib/anime.es.js';
 
-
 const growAndExplode = tiles =>{
-
   tiles.forEach(tile => {
     const transition = anime.timeline({
       targets: tile,
@@ -12,39 +10,32 @@ const growAndExplode = tiles =>{
     transition.add({
       scale: 1.3,
       duration: 700,
-      delay: 700,
       complete: () => {
         tile.removeAttribute('class')
         tile.classList.add('coin', 'bomb') 
-        console.log('grow then remove old class and add coin and bomb');
       }
     })
-
     transition.add({
-      duration: 700,
-      delay: 700,
+      delay: 1000,
+      duration: 500,
       complete: () => {
-        // tile.removeAttribute('class')
-        // tile.classList.add('coin', 'invisible') 
-        console.log('remove old class and add coin and invisible');
-      }
+        tile.classList.add('invisible') 
+      },
     })
 
     transition.add({
       scale: 1,
-      delay: 0
+      delay: 0,
     })
-
-  
-
+    
   })
 }
 
-const drop = tiles => {
+const drop = (tiles) => {
   const height = document.querySelector('.tile-container').getBoundingClientRect().height;
   
   tiles.forEach(tile => {
-    const target =  tile.firstElementChild
+    const target =  tile
     const down = tile.firstElementChild.dataset.down
 
     const transition = anime.timeline({
@@ -55,33 +46,27 @@ const drop = tiles => {
 
     transition.add({
       translateY: height*down,
-      delay: 1700,
-      duration: 1000,
-      complete: () => {
-        console.log('moving down ');
-      }
-    })
-
-    transition.add({
-      duration: 1000,
-      complete: () => { 
-        //target.parentElement.classList.add('bg-white')
-      }
-    })
-
-
-    transition.add({
-      translateY: 0,
       delay: 1000,
-      complete: () => {
-        console.log('moving back up');
-      }
+      duration: 700,
     })
+
   })//forEach ends here
 }//drop ends here
 
+const removeTranslate = tiles => {
+  tiles.forEach(tile => {
+    anime({
+      targets: tile,
+      direction: 'normal',
+      translateY: 0,
+      duration: 0,
+      easing: 'easeInSine'
+    })
+  })
+
+}
 
 
-const animation = {drop, growAndExplode}
+const animation = {drop, growAndExplode, removeTranslate}
 export default animation
 
