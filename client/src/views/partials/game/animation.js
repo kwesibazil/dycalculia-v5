@@ -18,9 +18,7 @@ const growAndExplode = tiles =>{
     transition.add({
       delay: 1000,
       duration: 500,
-      complete: () => {
-        tile.classList.add('invisible') 
-      },
+      complete: () => tile.classList.add('invisible') 
     })
 
     transition.add({
@@ -47,7 +45,7 @@ const drop = (tiles) => {
     transition.add({
       translateY: height*down,
       delay: 1000,
-      duration: 700,
+      duration: 900,
     })
 
   })//forEach ends here
@@ -66,7 +64,56 @@ const removeTranslate = tiles => {
 
 }
 
+const rotateAndAppear = tiles => {
+  tiles.forEach(tile => {
+    const target = tile.firstElementChild
+      const transition = anime.timeline({
+        targets: target,
+        direction: 'normal',
+        easing: 'easeInSine',
+      })
 
-const animation = {drop, growAndExplode, removeTranslate}
+      transition.add({ 
+        duration: 100,
+        scale: .2,
+        complete: () => target.classList.remove('invisible')
+      })
+
+      transition.add({
+        rotate: '1turn',
+        scale: 1.3,
+        duration: 500,
+      })
+      transition.add({
+        scale: 1,
+        duration: 250
+      })
+  })
+}
+
+
+const reset = tiles => {
+  setTimeout(()=> {
+    tiles.forEach(tile => {
+      const parent = tile
+      const child = tile.firstElementChild
+      parent.removeAttribute('style')
+      child.removeAttribute('style')
+      child.removeAttribute('data-down')
+
+      addHoverCss() //for some strange reasoning grid glitches if hover is added before
+
+    })
+  },900)
+}
+
+
+const addHoverCss = () => {
+  const tiles = document.getElementsByClassName('tile-container')
+  Array.from(tiles).forEach(tile =>tile.firstElementChild.classList.add('hvr-grow'))
+}
+
+
+const animation = {reset, drop, growAndExplode, removeTranslate, rotateAndAppear}
 export default animation
 

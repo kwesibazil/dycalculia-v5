@@ -35,8 +35,18 @@
       lvl: 1,
       points: 3,
       target: 130
-    }
+    }, 
   })
+
+
+  const tiles = {
+    alternate: true,
+    dest: {square: null, id:null, amount: null,},
+    source: {square: null, id:null, amount: null},
+  }
+
+
+  onMounted(() => init())
 
   const init = () => {
     crush.createGrid(game.grid)
@@ -44,6 +54,42 @@
     crush.findStreak(game.stats, game.grid)  //points returned here
     getReplacementTiles()
   }
+
+
+
+  const onClick = (e) => {
+    const square = e.target.closest('.tile-container') 
+    if(tiles.source.square === null){
+      tiles.source.square = square
+      tiles.source.id = parseInt(square.getAttribute('id'))
+    }else setTiles(square)
+  }
+  
+
+  const onSwipe = (direction, mouseEvent) =>{
+    if(tiles.source.square === null){
+      tiles.source.id = parseInt(tiles.source.square.getAttribute('id'))
+      tiles.source.square = mouseEvent.srcElement.closest('.tile-container')
+    }else if(tiles.dest.square !== null) return
+    
+    if(direction === 'top') setTiles(game.grid[tiles.source.id-8])
+    else if(direction === 'left')setTiles(game.grid[tiles.source.id-1])
+    else if(direction === 'right')setTiles(game.grid[tiles.source.id+1])
+    else if(direction === 'bottom')setTiles(game.grid[tiles.source.id+8])
+  }
+
+
+
+  const setTiles = square => {
+    const id = parseInt(square.getAttribute('id'))
+    if(tiles.source.square !== null && tiles.dest.square === null && tiles.source.square !== square ){
+      tiles.dest.id = id
+      tiles.dest.square = square
+      validMoves()  
+    }else return
+  }
+
+
 
     
   const getReplacementTiles = () =>{
@@ -62,13 +108,9 @@
       }
     })
 
-    //remove duplicates values
     replaceArr = [...new Set(replaceArr)]
     validArr = [...new Set(validArr)]
     crush.calculateDown(validArr, game.grid)
-
-
-    //debugger;
     animation.growAndExplode(markedArr)
     animation.drop(validArr)
 
@@ -76,80 +118,16 @@
         crush.findReplaceTiles(replaceArr, game.grid)
         crush.getTilesByClassName(invalidArr, 'replace')
         crush.getTilesByClassName(updateArr, 'update')
-        invalidArr.forEach(tile => tile.removeAttribute('class'))
         crush.updateTiles(updateArr)
+        crush.newTiles(invalidArr, values, true)
         animation.removeTranslate(validArr)
-      },2000)  
+        animation.rotateAndAppear(invalidArr)
+        animation.reset(replaceArr)
+      },1800)  
   }
 
 
-
-  onMounted(() =>{
-  init()
-  })
-
-
-
-  // const game = reactive({
-  //   size: 8, 
-  //   score: 0, 
-  //   points: 3, 
-  //   target: 130,
-  //   grid: [],
-  //   valid: [],
-  //   invalid: [],
-  //   replacement: []
-  // });
-
-
-
-  // const tiles = {
-  //   alternate: true,
-  //   dest: {square: null, id:null, amount: null,},
-  //   source: {square: null, id:null, amount: null},
-  // }
-
-
-
-
-
-  // const onClick = (e) => {
-  //   const square = e.target.closest('.tile-container') 
-  //   if(tiles.source.square === null){
-  //     tiles.source.square = square
-  //     tiles.source.id = parseInt(square.getAttribute('id'))
-  //     square.firstElementChild.firstElementChild.classList.add('source')
-  //   }else setTiles(square)
-  // }
-  
-
-  // const onSwipe = (direction, mouseEvent) =>{
-  //   if(tiles.source.square === null){
-  //     tiles.source.id = parseInt(tiles.source.square.getAttribute('id'))
-  //     tiles.source.square = mouseEvent.srcElement.closest('.tile-container')
-  //     tiles.source.square.firstElementChild.firstElementChild.classList.add('source')
-  //   }else if(tiles.dest.square !== null) return
-    
-  //   if(direction === 'top') setTiles(game.grid[tiles.source.id-8])
-  //   else if(direction === 'left')setTiles(game.grid[tiles.source.id-1])
-  //   else if(direction === 'right')setTiles(game.grid[tiles.source.id+1])
-  //   else if(direction === 'bottom')setTiles(game.grid[tiles.source.id+8])
-  // }
-
-  
-
-
  
-
-
-  
-  // onMounted(_ =>{
-  //   createGrid()
-  //   checkColStreak()
-  //   checkRowStreak()
-  //   //markedTiles()
-
-  // })
 
 
 

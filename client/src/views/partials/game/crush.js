@@ -18,22 +18,22 @@ const createGrid = grid => {
     @param {object[]} values  list of possible css class from which to generate random  tile
     @desc loops through each tile and assign a random amount and corresponding css class
 */
-const newTiles = (tiles, values) => {
+const newTiles = (tiles, values, addOn = false) => {
   tiles.forEach(tile => {
     try{
       const rand =  Math.floor(Math.random() * values.length)
       const elem = tile.firstElementChild
       const amount = parseInt(tile.firstElementChild.dataset.amount)
       
-      if(amount !== 0) throw new Error
-
+      if(amount !== 0)throw new Error
+  
       elem.removeAttribute('class')
       elem.setAttribute('data-amount', values[rand].amount)
       elem.classList.add('coin', values[rand].css)
+      if(addOn)elem.classList.add('invisible')
     }catch{
-      console.log(tile);
-      tile.classList.add('bg-danger')
-      console.log('amount is not 0');
+      tile.classList.add('bg-white')
+      console.log('failed to create tile');
     }
   })
 }
@@ -63,6 +63,12 @@ const findStreak = (stats, grid) => {
     }
     return points
 }
+
+
+
+
+
+
 
 
 
@@ -112,35 +118,41 @@ const findReplaceTiles = (tiles, grid) => {
 
 const getTilesByClassName = (arr, className) =>{
   const classTiles = document.getElementsByClassName(className)
-  Array.from(classTiles).forEach(tile => arr.push(tile))
+  Array.from(classTiles).forEach(tile => arr.push(tile.parentElement))
 }
+
+
+
 
 const updateTiles = tiles => {
   tiles.forEach(tile => {
-    tile.removeAttribute('class')
-    const className = parseInt(tile.dataset.amount)
+    tile.firstElementChild.removeAttribute('class')
+    const className = parseInt(tile.firstElementChild.dataset.amount)
 
     switch(className) {
       case 10:
-        tile.classList.add('coin', 'ten')
+        tile.firstElementChild.classList.add('coin', 'ten')
         break;
       case 20:
-        tile.classList.add('coin', 'twenty')
+        tile.firstElementChild.classList.add('coin', 'twenty')
         break;
       case 50:
-        tile.classList.add('coin', 'fifty')
+        tile.firstElementChild.classList.add('coin', 'fifty')
         break;
       case 100:
-        tile.classList.add('coin', 'one-hundred')
+        tile.firstElementChild.classList.add('coin', 'one-hundred')
         break;
       case 500:
-        tile.classList.add('coin', 'five-hundred')
+        tile.firstElementChild.classList.add('coin', 'five-hundred')
         break;
       default:
-        tile.classList.add('coin', 'bg-danger')
+        tile.firstElementChild.classList.add('coin', 'bg-danger')
     }
   })
 }
+
+
+
 
 
 const crush = {updateTiles, createGrid, newTiles, findStreak, calculateDown, findReplaceTiles, getTilesByClassName }
