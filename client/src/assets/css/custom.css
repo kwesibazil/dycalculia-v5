@@ -217,10 +217,12 @@ input::-ms-clear {
   border-bottom-left-radius: 50% !important;
 }
 
-.source{
+.selected{
   background-image: url('@/assets/img/selected.png');
-  background-size: 100% 100%;
+  background-size: 95% 95%;
   background-repeat: no-repeat;
+  background-position: center;
+  
 }
 
   

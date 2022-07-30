@@ -47,13 +47,13 @@ const routes = [
         path: '/games/math-crush',
         name: 'math-crush',
         meta: { requiresAuth: true }, 
-        component: () => import('@/views/partials/game/math-crush.vue') 
+        component: () => import('@/views/partials/game/math-crush/math-crush.vue') 
       },
       { 
         path: '/games/math-puzzle',
         name: 'math-puzzle',
         meta: { requiresAuth: true }, 
-        component: () => import('@/views/partials/game/math-puzzle.vue') 
+        component: () => import('@/views/partials/game/math-puzzle/math-puzzle.vue') 
       },
     ]
   },
